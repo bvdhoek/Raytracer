@@ -1,0 +1,1 @@
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\RayTracer.exe.config
