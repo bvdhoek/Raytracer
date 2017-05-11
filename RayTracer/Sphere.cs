@@ -38,7 +38,7 @@ namespace RayTracer
             if (p2 > r * r) return null;
             t -= (float) Math.Sqrt(R2() - p2);
             if ((t < ray.t) && (t > 0)) ray.t = t;
-            return null; // return the intersect
+            return new Intersection(this, Vector3.Normalize(ray.t * ray.d - o), ray.t);
         }
     }
 }

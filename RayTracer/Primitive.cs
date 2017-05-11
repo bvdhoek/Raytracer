@@ -5,6 +5,7 @@ namespace RayTracer
     abstract class Primitive
     {
         private Vector3 color;
+        public Vector3 o;
 
         public Primitive()
         {
