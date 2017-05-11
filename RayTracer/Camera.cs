@@ -1,5 +1,4 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace RayTracer
 {
@@ -18,15 +17,16 @@ namespace RayTracer
         public Camera()
         {
             this.screenCenter = pos + 10 * d;
-            p0 = pos + new Vector3(-1, -1,0);
+            p0 = pos + new Vector3(-1, -1, 0);
             p1 = pos + new Vector3(1, -1, 0);
             p2 = pos + new Vector3(-1, 1, 0);
         }
 
+        // Make a new ray from relative screen coördinates. 0 <= x, y <= 1
         internal Ray MakeRay(float x, float y)
         {
             Vector3 screenLocation = p0 + x * (p1 - p0) + y * (p2 - p0);
             Vector3 direction = Vector3.Normalize(screenLocation - this.pos);            return new Ray(pos, direction, 1);
         }
-}
+    }
 }
