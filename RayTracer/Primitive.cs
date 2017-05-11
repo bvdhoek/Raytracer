@@ -16,5 +16,7 @@ namespace RayTracer
         {
             this.color = color;
         }
+
+        public abstract Intersection Intersect(Ray ray);
     }
 }
