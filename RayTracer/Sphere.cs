@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System;
 
 namespace RayTracer 
 {
@@ -20,6 +21,24 @@ namespace RayTracer
         {
             this.pos = pos;
             this.r = r;
+        }
+
+        public float R2()
+        {
+            return r * r;
+        }
+
+        override
+        public Intersection Intersect(Ray ray)
+        {
+            Vector3 c = pos - ray.o;
+            float t = Vector3.Dot(c, ray.d);
+            Vector3 q = c - t * ray.d;
+            float p2 = Vector3.Dot(q, q);
+            if (p2 > r * r) return null;
+            t -= (float) Math.Sqrt(R2() - p2);
+            if ((t < ray.t) && (t > 0)) ray.t = t;
+            return null; // return the intersect
         }
     }
 }
