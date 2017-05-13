@@ -4,20 +4,27 @@ namespace RayTracer
 {
     abstract class Primitive
     {
-        private Vector3 color;
         public Vector3 o;
+        public Material material { get; private set; } = new Material();
 
         public Primitive()
         {
             // default color is red.
-            this.color = new Vector3(1, 0, 0);
+            material.SetColor(new Vector3(1, 0, 0));
         }
 
         public Primitive(Vector3 color)
         {
-            this.color = color;
+            material.SetColor(color);
         }
 
         public abstract Intersection Intersect(Ray ray);
+
+        // Not implemented yet.
+        // TODO: Implement when materials are implemented
+        public bool IsMirror()
+        {
+            return false;
+        }
     }
 }

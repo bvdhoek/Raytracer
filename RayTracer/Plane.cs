@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace RayTracer 
 {
@@ -20,6 +21,11 @@ namespace RayTracer
         {
             this.normal = normal;
             this.dist = d;
+        }
+
+        public override Intersection Intersect(Ray ray)
+        {
+            throw new NotImplementedException();
         }
     }
 }

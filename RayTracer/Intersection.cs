@@ -5,17 +5,23 @@ namespace RayTracer
     class Intersection
     {
         // Primitive we intersected
-        Primitive primitive;
+        public Primitive primitive { get; private set; }
+        
         // normal vector at intersection point
-        Vector3 normal;
+        public Vector3 normal { get; private set; }
+
+        // Location of intersection with the primitive
+        public Vector3 intersectionPoint { get; private set; }
+        
         // distance from origin of the ray to intersection
         public float dist;
 
-        public Intersection(Primitive p, Vector3 n, float d)
+        public Intersection(Primitive p, Vector3 normal, Vector3 intersectionPoint, float dist)
         {
             primitive = p;
-            normal = n;
-            dist = d;
+            this.normal = normal;
+            this.intersectionPoint = intersectionPoint;
+            this.dist = dist;
         }
     }
 }

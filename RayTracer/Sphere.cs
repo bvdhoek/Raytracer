@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using System;
 
-namespace RayTracer 
+namespace RayTracer
 {
     class Sphere : Primitive
     {
@@ -28,17 +28,27 @@ namespace RayTracer
             return r * r;
         }
 
-        override
-        public Intersection Intersect(Ray ray)
+
+        override public Intersection Intersect(Ray ray)
         {
             Vector3 c = pos - ray.o;
             float t = Vector3.Dot(c, ray.d);
             Vector3 q = c - t * ray.d;
             float p2 = Vector3.Dot(q, q);
-            if (p2 > r * r) return null;
-            t -= (float) Math.Sqrt(R2() - p2);
-            if ((t < ray.t) && (t > 0)) ray.t = t;
-            return new Intersection(this, Vector3.Normalize(ray.t * ray.d - o), ray.t);
+
+            if (p2 > r * r)
+            {
+                return null;
+            }
+
+            t -= (float)Math.Sqrt(R2() - p2);
+
+            if ((t < ray.t) && (t > 0))
+            {
+                ray.t = t;
+            }
+            //TODO: Calculate position of the intersection!! We need it!!
+            return new Intersection(this, Vector3.Normalize(ray.t * ray.d - o), new Vector3(), ray.t);
         }
     }
 }

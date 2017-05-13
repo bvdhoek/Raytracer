@@ -24,6 +24,7 @@ namespace RayTracer
         }
 
         // Make a new ray from relative screen coördinates. 0 <= x, y <= 1
+        // Returns: A normalized ray from camera position through coordinate (x, y) on the screen
         internal Ray MakeRay(float x, float y)
         {
             Vector3 screenLocation = p0 + x * (p1 - p0) + y * (p2 - p0);

@@ -6,6 +6,7 @@
 //window), it generates debug output by visualizing every Nth ray(where N is e.g. 10).
 
 using System;
+using System.Numerics;
 
 namespace RayTracer
 {
@@ -23,13 +24,28 @@ namespace RayTracer
                     float x = ((float)i) / 512;
                     float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
-                    PlotPixel(scene.Intersect(ray), i, j);
+                    PlotPixel(Trace(ray), i, j);
                 }
             }
         }
 
-        private void PlotPixel(Intersection intersection, int i, int j)
+        Vector3 Trace(Ray ray)
         {
+            Intersection intersect = scene.Intersect(ray);
+            if(intersect == null)
+            {
+                return new Vector3(0, 0, 0);
+            }
+            if (intersect.primitive.material.isMirror)
+            { } // Not implemented yet; cast a mirror ray:
+            //   return intersect.primitive.material.color * Trace( );
+            return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
+        }
+
+
+        private void PlotPixel(Vector3 color, int i, int j)
+        {
+            // Plot color to the bitmap using the coördinates
             throw new NotImplementedException();
         }
     }
