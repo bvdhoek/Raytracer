@@ -36,19 +36,19 @@ namespace RayTracer
             Vector3 q = c - t * ray.d;
             float p2 = Vector3.Dot(q, q);
 
-            if (p2 > r * r)
-            {
+            if (p2 > r * r) 
+            { // We didn't hit the sphere.
                 return null;
             }
 
             t -= (float)Math.Sqrt(R2() - p2);
 
             if ((t < ray.t) && (t > 0))
-            {
+            { // Set length of the ray to t.
                 ray.t = t;
             }
-            //TODO: Calculate position of the intersection!! We need it!!
-            return new Intersection(this, Vector3.Normalize(ray.t * ray.d - o), new Vector3(), ray.t);
+
+            return new Intersection(this, Vector3.Normalize(ray.t * ray.d - o), ray.d * ray.t, ray.t);
         }
     }
 }
