@@ -13,7 +13,8 @@ namespace RayTracer
         Vector3 screenCenter;
 
         // Screen corners:
-        Vector3 p0, p1, p2;
+        Vector3 p0, p1, p2;
+
         public Camera()
         {
             this.screenCenter = pos + 10 * d;
@@ -26,7 +27,8 @@ namespace RayTracer
         internal Ray MakeRay(float x, float y)
         {
             Vector3 screenLocation = p0 + x * (p1 - p0) + y * (p2 - p0);
-            Vector3 direction = Vector3.Normalize(screenLocation - this.pos);            return new Ray(pos, direction, 1);
+            Vector3 direction = Vector3.Normalize(screenLocation - this.pos);
+            return new Ray(pos, direction, 1);
         }
     }
 }
