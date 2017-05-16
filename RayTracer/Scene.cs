@@ -15,8 +15,8 @@ namespace RayTracer
         {
             this.lights[0] = new Light();
 
-            Vector3 spherePos = new Vector3(0, 0, 100);
-            this.primitives[0] = new Sphere(spherePos, 3);
+            Vector3 spherePos = new Vector3(0, 0, 30);
+            this.primitives[0] = new Sphere(spherePos, 0.5f);
         }
 
         // Find intersection of the ray with nearest object in the scene.
@@ -38,15 +38,17 @@ namespace RayTracer
 
         internal Vector3 DirectIllumination(Intersection intersect)
         {
-            return intersect.primitive.material.color;
             Ray shadowRay = new Ray();
             shadowRay.origin = intersect.intersectionPoint;
-            
+
             // Keep an non-normalized directon in case we need to calculate length later
             Vector3 rayDirection = lights[0].pos - intersect.intersectionPoint;
 
             // Normalize for calulating intersections
             shadowRay.direction = Vector3.Normalize(rayDirection);
+
+            // Offset the origin by a small margin
+            shadowRay.origin += 0.001f * shadowRay.direction;
 
             for (int i = 0; i < primitives.Length; i++)
             {

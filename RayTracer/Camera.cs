@@ -29,7 +29,7 @@ namespace RayTracer
         {
             Vector3 screenLocation = p0 + x * (p1 - p0) + y * (p2 - p0);
             Vector3 direction = screenLocation - this.pos;
-            return new Ray(pos, direction, 1);
+            return new Ray(pos, direction);
         }
     }
 }

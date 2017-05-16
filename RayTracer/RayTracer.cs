@@ -11,7 +11,7 @@ using System.Numerics;
 
 namespace RayTracer
 {
-   public class RayTracer
+    public class RayTracer
     {
         Bitmap image3D = new Bitmap(512, 512);
 
@@ -36,7 +36,7 @@ namespace RayTracer
         Vector3 Trace(Ray ray)
         {
             Intersection intersect = scene.Intersect(ray);
-            if(intersect == null)
+            if (intersect == null)
             {
                 return new Vector3(0, 0, 0);
             }
@@ -50,7 +50,21 @@ namespace RayTracer
         private void PlotPixel(Bitmap bitmap, Vector3 color, int i, int j)
         {
             // Plot color to the bitmap using the coördinates
-            bitmap.SetPixel(i, j, Color.FromArgb(255, (int)color.X * 255, (int)color.Y * 255, (int)color.Z * 255));
+            bitmap.SetPixel(i, j, Color.FromArgb(
+                255,
+                Clamp((int)(color.X * 255)),
+                Clamp((int)(color.Y * 255)),
+                Clamp((int)(color.Z * 255))));
+        }
+
+        // Clamp integer to minimum 0
+        int Clamp(int i)
+        {
+            if (i < 0)
+            {
+                i = 0;
+            }
+            return i;
         }
     }
 }
