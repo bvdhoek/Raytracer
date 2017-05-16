@@ -7,3 +7,12 @@ D:\Users\Maaike\Documents\Graphics\Raytracer\RayTracer\bin\Debug\System.Numerics
 D:\Users\Maaike\Documents\Graphics\Raytracer\RayTracer\bin\Debug\System.Numerics.Vectors.xml
 D:\Users\Maaike\Documents\Graphics\Raytracer\RayTracer\obj\Debug\RayTracer.exe
 D:\Users\Maaike\Documents\Graphics\Raytracer\RayTracer\obj\Debug\RayTracer.pdb
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\RayTracer.exe
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\RayTracer.pdb
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.csprojResolveAssemblyReference.cache
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.exe
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.pdb
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.RaytracerForm.resources
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.csproj.GenerateResource.Cache

@@ -27,7 +27,7 @@ namespace RayTracer
                     float x = ((float)i) / 512;
                     float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
-                    PlotPixel(image3D, Trace(ray), i, j);
+                    PlotPixel(Trace(ray), i, j);
                 }
             }
             return image3D;
@@ -47,10 +47,10 @@ namespace RayTracer
         }
 
 
-        private void PlotPixel(Bitmap bitmap, Vector3 color, int i, int j)
+        private void PlotPixel(Vector3 color, int i, int j)
         {
             // Plot color to the bitmap using the coördinates
-            bitmap.SetPixel(i, j, Color.FromArgb((int)color.X * 255, (int)color.Y * 255, (int)color.Z * 255, 255));
+            image3D.SetPixel(i, j, Color.FromArgb((int)color.X * 255, (int)color.Y * 255, (int)color.Z * 255));
         }
     }
 }
