@@ -37,6 +37,7 @@ namespace RayTracer
             { // Set length of the ray to t.
                 ray.t = t;
             }
+            else return null;
             // return a new intersect with: this, the normal to the sphere, the intersection point, the distance
             return new Intersection(this, Vector3.Normalize(ray.t * ray.direction - origin), ray.direction * ray.t, ray.t);
         }
