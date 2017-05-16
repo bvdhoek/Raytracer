@@ -4,14 +4,14 @@ namespace RayTracer
 {
     struct Ray
     {
-        public Vector3 d; // ray direction
-        public Vector3 o; // ray origin
+        public Vector3 direction; // ray direction
+        public Vector3 origin; // ray origin
         public float t; // ray length
 
         public Ray(Vector3 origin, Vector3 direction, float length)
         {
-            d = Vector3.Normalize(direction);
-            o = origin;
+            this.direction = Vector3.Normalize(direction);
+            this.origin = origin;
             t = length;
         }
     }

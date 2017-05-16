@@ -39,13 +39,13 @@ namespace RayTracer
         internal Vector3 DirectIllumination(Intersection intersect)
         {
             Ray shadowRay = new Ray();
-            shadowRay.o = intersect.intersectionPoint;
+            shadowRay.origin = intersect.intersectionPoint;
             
             // Keep an non-normalized directon in case we need to calculate length later
             Vector3 rayDirection = lights[0].pos - intersect.intersectionPoint;
 
             // Normalize for calulating intersections
-            shadowRay.d = Vector3.Normalize(rayDirection);
+            shadowRay.direction = Vector3.Normalize(rayDirection);
 
             for (int i = 0; i < primitives.Length; i++)
             {
@@ -58,7 +58,7 @@ namespace RayTracer
             // No intersection happened so we can calculate light color/intensity:
             float dist = rayDirection.Length();
             float attenuation = 1 / (dist * dist);
-            return lights[0].color * Vector3.Dot(intersect.normal, shadowRay.d) * attenuation;
+            return lights[0].color * Vector3.Dot(intersect.normal, shadowRay.direction) * attenuation;
         }
     }
 }
