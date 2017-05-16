@@ -6,16 +6,19 @@
 //window), it generates debug output by visualizing every Nth ray(where N is e.g. 10).
 
 using System;
+using System.Drawing;
 using System.Numerics;
 
 namespace RayTracer
 {
-    class RayTracer
+   public class RayTracer
     {
+        Bitmap image3D = new Bitmap(512, 512);
+
         Camera camera;
         Scene scene;
 
-        void Render()
+        public Bitmap Render()
         {
             for (int i = 0; i < 512; i++)
             {
@@ -24,9 +27,10 @@ namespace RayTracer
                     float x = ((float)i) / 512;
                     float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
-                    PlotPixel(Trace(ray), i, j);
+                    PlotPixel(image3D, Trace(ray), i, j);
                 }
             }
+            return image3D;
         }
 
         Vector3 Trace(Ray ray)
@@ -43,10 +47,10 @@ namespace RayTracer
         }
 
 
-        private void PlotPixel(Vector3 color, int i, int j)
+        private void PlotPixel(Bitmap bitmap, Vector3 color, int i, int j)
         {
             // Plot color to the bitmap using the coördinates
-            throw new NotImplementedException();
+            bitmap.SetPixel(i, j, Color.FromArgb((int)color.X * 255, (int)color.Y * 255, (int)color.Z * 255, 255));
         }
     }
 }

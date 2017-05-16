@@ -1,4 +1,7 @@
-﻿namespace RayTracer
+﻿using System.Windows.Forms;
+using System.Drawing;
+
+namespace RayTracer
 // dist = distance
 // d = direction
 // r = radius
@@ -10,6 +13,25 @@
     {
         static void Main(string[] args)
         {
+            Application.Run(new RayTracerForm(new RayTracer()));
+        }
+    }
+
+    public class RayTracerForm : Form
+    {
+        private RayTracer rayTracer;
+
+        public RayTracerForm(RayTracer rayTracer)
+        {
+            this.rayTracer = rayTracer;
+        }
+
+        private void DrawImage()
+        {
+            Graphics g = this.CreateGraphics();
+            Image image = (Image)rayTracer.Render();
+            g.DrawImage(image, 0, 0, 512, 512);
         }
     }
 }
+
