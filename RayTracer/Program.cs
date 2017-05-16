@@ -24,18 +24,16 @@ namespace RayTracer
         public RayTracerForm(RayTracer rayTracer)
         {
             this.rayTracer = rayTracer;
-            this.Width = 512;
-            this.Height = 512;
-
-            this.DrawImage();
+            this.Width = 1024;
+            this.Height = 512;           
         }
 
-        private void DrawImage()
+        protected override void OnPaint(PaintEventArgs e)
         {
-            Graphics g = this.CreateGraphics();
             Image image = (Image)rayTracer.Render();
-            g.DrawImage(image, 0, 0, 512, 512);
-            this.Invalidate();
+            e.Graphics.DrawImage(image, 0, 0, 512, 512);
+            //e.Graphics.FillRectangle(Brushes.Black, 512, 0, 512, 512);
+            base.OnPaint(e);
         }
     }
 }

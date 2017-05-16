@@ -50,7 +50,7 @@ namespace RayTracer
         private void PlotPixel(Bitmap bitmap, Vector3 color, int i, int j)
         {
             // Plot color to the bitmap using the coördinates
-            bitmap.SetPixel(i, j, Color.FromArgb((int)color.X * 255, (int)color.Y * 255, (int)color.Z * 255, 255));
+            bitmap.SetPixel(i, j, Color.FromArgb(255, (int)color.X * 255, (int)color.Y * 255, (int)color.Z * 255));
         }
     }
 }
