@@ -23,6 +23,7 @@ namespace RayTracer
             this.r = r;
         }
 
+        // Check if the ray intersects this sphere. If yes, return an intersection. Otherwise return null.
         override public Intersection Intersect(Ray ray)
         {
             Vector3 c = pos - ray.o;

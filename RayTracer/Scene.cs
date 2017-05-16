@@ -7,9 +7,19 @@ namespace RayTracer
     //method, which loops over the primitives and returns the closest intersection
     class Scene
     {
-        private Primitive[] primitives = new Primitive[0];
-        private Light[] lights = new Light[0];
+        private Primitive[] primitives = new Primitive[1];
+        private Light[] lights = new Light[1];
 
+        // Create new scene and populate with some default lights and primitives.
+        public Scene()
+        {
+            this.lights[0] = new Light();
+
+            Vector3 spherePos = new Vector3(0, 0, 10);
+            this.primitives[0] = new Sphere(spherePos, 3);
+        }
+
+        // Find intersection of the ray with nearest object in the scene.
         public Intersection Intersect(Ray ray)
         {
             Intersection nearest = null;
