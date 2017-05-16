@@ -23,12 +23,6 @@ namespace RayTracer
             this.r = r;
         }
 
-        public float R2()
-        {
-            return r * r;
-        }
-
-
         override public Intersection Intersect(Ray ray)
         {
             Vector3 c = pos - ray.o;
@@ -41,13 +35,13 @@ namespace RayTracer
                 return null;
             }
 
-            t -= (float)Math.Sqrt(R2() - p2);
+            t -= (float)Math.Sqrt(r * r - p2);
 
             if ((t < ray.t) && (t > 0))
             { // Set length of the ray to t.
                 ray.t = t;
             }
-
+            // return a new intersect with: this, the normal to the sphere, the intersection point, the distance
             return new Intersection(this, Vector3.Normalize(ray.t * ray.d - o), ray.d * ray.t, ray.t);
         }
     }
