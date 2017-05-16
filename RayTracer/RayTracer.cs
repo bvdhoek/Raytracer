@@ -12,14 +12,14 @@ using System.Numerics;
 
 namespace RayTracer
 {
-    public unsafe class RayTracer
+    public class RayTracer
     {
         Bitmap image3D = new Bitmap(512, 512);
 
         Camera camera = new Camera();
         Scene scene = new Scene();
 
-        public Bitmap Render()
+        public unsafe Bitmap Render()
         {
             Rectangle rect = new Rectangle(0, 0, 512, 512);
             // lock the bits
