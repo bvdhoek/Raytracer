@@ -7,7 +7,7 @@ namespace RayTracer
     // method, which loops over the primitives and returns the closest intersection
     class Scene
     {
-        private Primitive[] primitives = new Primitive[1];
+        private Primitive[] primitives = new Primitive[3];
         private Light[] lights = new Light[1];
 
         // Create new scene and populate with some default lights and primitives.
@@ -17,6 +17,12 @@ namespace RayTracer
 
             Vector3 spherePos = new Vector3(0, 0, 30);
             this.primitives[0] = new Sphere(spherePos, 0.5f);
+
+            spherePos.X -= 2;
+            this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0));
+
+            spherePos.X += 4;
+            this.primitives[2] = new Sphere(spherePos, 0.5f, new Vector3(0, 0, 1));
         }
 
         // Find intersection of the ray with nearest object in the scene.
