@@ -26,7 +26,27 @@ namespace RayTracer
         {
             this.rayTracer = rayTracer;
             this.Width = 1024;
-            this.Height = 512;           
+            this.Height = 512;
+            this.SetStyle(ControlStyles.DoubleBuffer |
+                          ControlStyles.UserPaint |
+                          ControlStyles.AllPaintingInWmPaint,
+                          true);
+            this.UpdateStyles();
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            if (e.KeyCode == Keys.Q)
+            {
+                rayTracer.camera.Zoom(1.1f);
+                Invalidate();
+            }
+            else if (e.KeyCode == Keys.W)
+            {
+                rayTracer.camera.Zoom(0.9f);
+                Invalidate();
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)
