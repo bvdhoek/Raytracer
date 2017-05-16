@@ -18,9 +18,9 @@ namespace RayTracer
         public Camera()
         {
             this.screenCenter = pos + 10 * d;
-            p0 = pos + new Vector3(-1, -1, 0);
-            p1 = pos + new Vector3(1, -1, 0);
-            p2 = pos + new Vector3(-1, 1, 0);
+            p0 = screenCenter + new Vector3(-1, -1, 0);
+            p1 = screenCenter + new Vector3(1, -1, 0);
+            p2 = screenCenter + new Vector3(-1, 1, 0);
         }
 
         // Make a new ray from relative screen coördinates. 0 <= x, y <= 1
@@ -28,7 +28,7 @@ namespace RayTracer
         internal Ray MakeRay(float x, float y)
         {
             Vector3 screenLocation = p0 + x * (p1 - p0) + y * (p2 - p0);
-            Vector3 direction = Vector3.Normalize(screenLocation - this.pos);
+            Vector3 direction = screenLocation - this.pos;
             return new Ray(pos, direction, 1);
         }
     }
