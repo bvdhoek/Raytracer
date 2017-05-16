@@ -60,14 +60,8 @@ namespace RayTracer
         // Clamp integer to minimum 0
         int Clamp(int i)
         {
-            if (i < 0)
-            {
-                i = 0;
-            }
-            if (i > 255)
-            {
-                i = 255;
-            }
+            if (i < 0) i = 0;
+            if (i > 255) i = 255;
             return i;
         }
     }
