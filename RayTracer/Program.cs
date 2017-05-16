@@ -47,6 +47,26 @@ namespace RayTracer
                 rayTracer.camera.Zoom(0.9f);
                 Invalidate();
             }
+            else if (e.KeyCode == Keys.Left)
+            {
+                rayTracer.camera.MoveX(-0.1f);
+                Invalidate();
+            }
+            else if (e.KeyCode == Keys.Right)
+            {
+                rayTracer.camera.MoveX(0.1f);
+                Invalidate();
+            }
+            else if (e.KeyCode == Keys.Up)
+            {
+                rayTracer.camera.MoveY(0.1f);
+                Invalidate();
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                rayTracer.camera.MoveY(-0.1f);
+                Invalidate();
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)
