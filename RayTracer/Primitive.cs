@@ -2,7 +2,7 @@
 
 namespace RayTracer
 {
-    abstract class Primitive
+    public abstract class Primitive
     {
         public Vector3 origin;
         public Material material { get; private set; } = new Material();

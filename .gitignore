@@ -251,3 +251,5 @@ paket-files/
 .idea/
 *.sln.iml
 RayTracer/obj/Debug/RayTracer.csproj.FileListAbsolute.txt
+RayTracer/obj/Debug/RayTracer.csproj.FileListAbsolute.txt
+RayTracer/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache

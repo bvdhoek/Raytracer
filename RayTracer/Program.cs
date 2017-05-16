@@ -1,5 +1,7 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
+using System.Diagnostics;
+using System;
 
 namespace RayTracer
 // dist = distance
@@ -32,7 +34,15 @@ namespace RayTracer
         {
             Image image = (Image)rayTracer.Render();
             e.Graphics.DrawImage(image, 0, 0, 512, 512);
-            //e.Graphics.FillRectangle(Brushes.Black, 512, 0, 512, 512);
+            
+            // ♫♫ I see a blank background and i want to paint it black... ♫♫
+            e.Graphics.FillRectangle(Brushes.Black, 512, 0, 512, 512);
+
+            // Debug view
+            DebugView debugView = new DebugView();
+            Image view = (Image) debugView.Render();
+            e.Graphics.DrawImage(view, 512, 0, 512, 512);
+
             base.OnPaint(e);
         }
     }

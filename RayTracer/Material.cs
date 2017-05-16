@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace RayTracer
 {
-    internal class Material
+    public class Material
     {
         public Vector3 color { get; private set; }
         public bool isMirror { get; private set; } = false;

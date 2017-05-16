@@ -5,9 +5,9 @@ namespace RayTracer
 {
     //    Scene, which stores a list of primitives and light sources.It implements a scene-level Intersect
     //method, which loops over the primitives and returns the closest intersection
-    class Scene
+    public class Scene
     {
-        private Primitive[] primitives = new Primitive[1];
+        public Primitive[] primitives = new Primitive[1];
         private Light[] lights = new Light[1];
 
         // Create new scene and populate with some default lights and primitives.

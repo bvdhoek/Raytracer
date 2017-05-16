@@ -2,7 +2,7 @@
 
 namespace RayTracer
 {
-    struct Ray
+    public struct Ray
     {
         public Vector3 direction; // ray direction
         public Vector3 origin; // ray origin
