@@ -24,6 +24,10 @@ namespace RayTracer
         public RayTracerForm(RayTracer rayTracer)
         {
             this.rayTracer = rayTracer;
+            this.Width = 512;
+            this.Height = 512;
+
+            this.DrawImage();
         }
 
         private void DrawImage()
@@ -31,6 +35,7 @@ namespace RayTracer
             Graphics g = this.CreateGraphics();
             Image image = (Image)rayTracer.Render();
             g.DrawImage(image, 0, 0, 512, 512);
+            this.Invalidate();
         }
     }
 }
