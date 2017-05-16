@@ -7,6 +7,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Numerics;
 
 namespace RayTracer
@@ -18,18 +19,40 @@ namespace RayTracer
         public Camera camera = new Camera();
         Scene scene = new Scene();
 
-        public Bitmap Render()
+        public unsafe Bitmap Render()
         {
+            Rectangle rect = new Rectangle(0, 0, 512, 512);
+            // lock the bits
+            BitmapData bitmapData =
+                image3D.LockBits(rect, ImageLockMode.WriteOnly,
+                PixelFormat.Format32bppPArgb);
+
+            // Get the address of the first line.
+            uint* ptr = (uint*)bitmapData.Scan0;
+
             for (int i = 0; i < 512; i++)
             {
+                uint* line = ptr;
+
                 for (int j = 0; j < 512; j++)
                 {
-                    float x = ((float)i) / 512;
-                    float y = ((float)j) / 512;
+                    float x = ((float)j) / 512;
+                    float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
-                    PlotPixel(image3D, Trace(ray), i, j);
+                    Vector3 color = Trace(ray);
+                    *line++ = (uint) Color.FromArgb(
+                                        Clamp((int)(color.X * 255)),
+                                        Clamp((int)(color.Y * 255)),
+                                        Clamp((int)(color.Z * 255))
+                                     ).ToArgb();
                 }
+                // Set pointer to next line
+                ptr += bitmapData.Stride / 4;
             }
+
+            // Unlock the bits.
+            image3D.UnlockBits(bitmapData);
+
             return image3D;
         }
 
@@ -44,16 +67,6 @@ namespace RayTracer
             { } // Not implemented yet; cast a mirror ray:
             //   return intersect.primitive.material.color * Trace( );
             return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
-        }
-
-
-        private void PlotPixel(Bitmap bitmap, Vector3 color, int i, int j)
-        {
-            // Plot color to the bitmap using the coördinates
-            bitmap.SetPixel(i, j, Color.FromArgb(
-                Clamp((int)(color.X * 255)),
-                Clamp((int)(color.Y * 255)),
-                Clamp((int)(color.Z * 255))));
         }
 
         // Clamp integer to minimum 0
