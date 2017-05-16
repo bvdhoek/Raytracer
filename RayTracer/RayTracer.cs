@@ -51,7 +51,6 @@ namespace RayTracer
         {
             // Plot color to the bitmap using the coördinates
             bitmap.SetPixel(i, j, Color.FromArgb(
-                255,
                 Clamp((int)(color.X * 255)),
                 Clamp((int)(color.Y * 255)),
                 Clamp((int)(color.Z * 255))));
@@ -60,10 +59,8 @@ namespace RayTracer
         // Clamp integer to minimum 0
         int Clamp(int i)
         {
-            if (i < 0)
-            {
-                i = 0;
-            }
+            if (i < 0) i = 0;
+            if (i > 255) i = 255;
             return i;
         }
     }

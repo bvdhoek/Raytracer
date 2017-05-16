@@ -1,4 +1,4 @@
-﻿﻿using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using System.Drawing;
 using System.Numerics;
 
@@ -31,8 +31,8 @@ namespace RayTracer
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            Image image = (Image)rayTracer.Render();
-            e.Graphics.DrawImage(image, 0, 0, 512, 512);
+            Image image = rayTracer.Render();
+            e.Graphics.DrawImage(image, 0, 0);
             
             // ♫♫ I see a blank background and i want to paint it black... ♫♫
             e.Graphics.FillRectangle(Brushes.Black, 512, 0, 512, 512);
@@ -41,22 +41,19 @@ namespace RayTracer
             DebugView debugView = new DebugView();
             Image view = (Image) debugView.Render(rayTracer);
             e.Graphics.DrawImage(view, 512, 0, 512, 512);
-
             base.OnPaint(e);
         }
 
         private void PlotPixel(Bitmap bitmap, Vector3 color, int i, int j)
         {
             // Plot color to the bitmap using the coördinates
-            bitmap.SetPixel(i, j, Color.FromArgb(255, Clamp((int)(color.X * 255)), Clamp((int)(color.Y * 255)), Clamp((int)(color.Z * 255))));
+            bitmap.SetPixel(i, j, Color.FromArgb(Clamp((int)(color.X * 255)), Clamp((int)(color.Y * 255)), Clamp((int)(color.Z * 255))));
         }
 
         int Clamp(int i)
         {
-            if (i < 0)
-            {
-                i = 0;
-            }
+            if (i < 0) i = 0;
+            if (i > 255) i = 255;
             return i;
         }
     }
