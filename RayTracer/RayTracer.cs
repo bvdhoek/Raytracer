@@ -64,6 +64,10 @@ namespace RayTracer
             {
                 i = 0;
             }
+            if (i > 255)
+            {
+                i = 255;
+            }
             return i;
         }
     }
