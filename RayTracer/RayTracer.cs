@@ -41,7 +41,13 @@ namespace RayTracer
                 return new Vector3(0, 0, 0);
             }
             if (intersect.primitive.material.isMirror)
-            { } // Not implemented yet; cast a mirror ray:
+            {
+                Ray mirrorRay = new Ray();
+                mirrorRay.origin = intersect.intersectionPoint;
+                mirrorRay.direction = (ray.direction * ray.t) - 2 * Vector3.Dot((ray.direction * ray.t), intersect.normal) * intersect.normal;
+                mirrorRay.origin += mirrorRay.direction * 0.001f;
+                return Trace(mirrorRay);
+            } // Not implemented yet; cast a mirror ray:
             //   return intersect.primitive.material.color * Trace( );
             return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
         }

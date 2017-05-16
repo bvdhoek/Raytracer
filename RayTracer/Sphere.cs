@@ -18,6 +18,11 @@ namespace RayTracer
             this.r = r;
         }
 
+        public Sphere(Vector3 origin, float r, Vector3 color, bool isMirror) : base(origin, color, isMirror)
+        {
+            this.r = r;
+        }
+
         // Check if the ray intersects this sphere. If yes, return an intersection. Otherwise return null.
         override public Intersection Intersect(Ray ray)
         {
