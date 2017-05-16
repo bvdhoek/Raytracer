@@ -15,7 +15,7 @@ namespace RayTracer
         {
             this.lights[0] = new Light();
 
-            Vector3 spherePos = new Vector3(0, 0, 10);
+            Vector3 spherePos = new Vector3(0, 0, 100);
             this.primitives[0] = new Sphere(spherePos, 3);
         }
 
@@ -38,6 +38,7 @@ namespace RayTracer
 
         internal Vector3 DirectIllumination(Intersection intersect)
         {
+            return intersect.primitive.material.color;
             Ray shadowRay = new Ray();
             shadowRay.origin = intersect.intersectionPoint;
             

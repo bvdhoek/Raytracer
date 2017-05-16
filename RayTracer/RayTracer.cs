@@ -25,7 +25,7 @@ namespace RayTracer
                 for (int j = 0; j < 512; j++)
                 {
                     float x = ((float)i) / 512;
-                    float y = ((float)i) / 512;
+                    float y = ((float)j) / 512;
                     Ray ray = camera.MakeRay(x, y);
                     PlotPixel(image3D, Trace(ray), i, j);
                 }
