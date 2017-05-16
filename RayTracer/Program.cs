@@ -39,7 +39,7 @@ namespace RayTracer
 
             // Debug view
             DebugView debugView = new DebugView();
-            Image view = (Image) debugView.Render();
+            Image view = (Image) debugView.Render(rayTracer);
             e.Graphics.DrawImage(view, 512, 0, 512, 512);
 
             base.OnPaint(e);
