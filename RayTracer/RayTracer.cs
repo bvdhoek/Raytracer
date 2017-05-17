@@ -5,7 +5,6 @@
 //then visualized by plotting a pixel. For one line of pixels (typically line 256 for a 512x512
 //window), it generates debug output by visualizing every Nth ray(where N is e.g. 10).
 
-using System;
 using System.Drawing;
 using System.Numerics;
 
@@ -18,6 +17,7 @@ namespace RayTracer
         Camera camera = new Camera();
         Scene scene = new Scene();
 
+        // Make a ray for each pixel and put them on the bitmap image.
         public Bitmap Render()
         {
             for (int i = 0; i < 512; i++)
@@ -40,15 +40,17 @@ namespace RayTracer
             {
                 return new Vector3(0, 0, 0);
             }
+
             if (intersect.primitive.material.isMirror)
             {
+                //TODO: check why this doesn't work when there's a debug view.
                 Ray mirrorRay = new Ray();
                 mirrorRay.origin = intersect.intersectionPoint;
-                mirrorRay.direction = (ray.direction * ray.t) - 2 * Vector3.Dot((ray.direction * ray.t), intersect.normal) * intersect.normal;
+                mirrorRay.direction = Vector3.Normalize((ray.direction * ray.t) - 2 * Vector3.Dot((ray.direction * ray.t), intersect.normal) * intersect.normal);
                 mirrorRay.origin += mirrorRay.direction * 0.001f;
                 return Trace(mirrorRay);
-            } // Not implemented yet; cast a mirror ray:
-            //   return intersect.primitive.material.color * Trace( );
+                //   return intersect.primitive.material.color * Trace( );
+            } 
             return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
         }
 
@@ -62,7 +64,7 @@ namespace RayTracer
                 Clamp((int)(color.Z * 255))));
         }
 
-        // Clamp integer to minimum 0
+        // Clamp integer to minimum 0 and max 255
         int Clamp(int i)
         {
             if (i < 0) i = 0;
