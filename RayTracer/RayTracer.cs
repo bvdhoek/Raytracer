@@ -5,7 +5,9 @@
 //then visualized by plotting a pixel. For one line of pixels (typically line 256 for a 512x512
 //window), it generates debug output by visualizing every Nth ray(where N is e.g. 10).
 
+using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Numerics;
 
 namespace RayTracer
@@ -14,22 +16,43 @@ namespace RayTracer
     {
         Bitmap image3D = new Bitmap(512, 512);
 
-        Camera camera = new Camera();
+        public Camera camera = new Camera();
         Scene scene = new Scene();
 
-        // Make a ray for each pixel and put them on the bitmap image.
-        public Bitmap Render()
+        public unsafe Bitmap Render()
         {
+            Rectangle rect = new Rectangle(0, 0, 512, 512);
+            // lock the bits
+            BitmapData bitmapData =
+                image3D.LockBits(rect, ImageLockMode.WriteOnly,
+                PixelFormat.Format32bppPArgb);
+
+            // Get the address of the first line.
+            uint* ptr = (uint*)bitmapData.Scan0;
+
             for (int i = 0; i < 512; i++)
             {
+                uint* line = ptr;
+
                 for (int j = 0; j < 512; j++)
                 {
-                    float x = ((float)i) / 512;
-                    float y = ((float)j) / 512;
+                    float x = ((float)j) / 512;
+                    float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
-                    PlotPixel(image3D, Trace(ray), i, j);
+                    Vector3 color = Trace(ray);
+                    *line++ = (uint) Color.FromArgb(
+                                        Clamp((int)(color.X * 255)),
+                                        Clamp((int)(color.Y * 255)),
+                                        Clamp((int)(color.Z * 255))
+                                     ).ToArgb();
                 }
+                // Set pointer to next line
+                ptr += bitmapData.Stride / 4;
             }
+
+            // Unlock the bits.
+            image3D.UnlockBits(bitmapData);
+
             return image3D;
         }
 
@@ -40,31 +63,13 @@ namespace RayTracer
             {
                 return new Vector3(0, 0, 0);
             }
-
             if (intersect.primitive.material.isMirror)
-            {
-                //TODO: check why this doesn't work when there's a debug view.
-                Ray mirrorRay = new Ray();
-                mirrorRay.origin = intersect.intersectionPoint;
-                mirrorRay.direction = Vector3.Normalize((ray.direction * ray.t) - 2 * Vector3.Dot((ray.direction * ray.t), intersect.normal) * intersect.normal);
-                mirrorRay.origin += mirrorRay.direction * 0.001f;
-                return Trace(mirrorRay);
-                //   return intersect.primitive.material.color * Trace( );
-            } 
+            { } // Not implemented yet; cast a mirror ray:
+            //   return intersect.primitive.material.color * Trace( );
             return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
         }
 
-
-        private void PlotPixel(Bitmap bitmap, Vector3 color, int i, int j)
-        {
-            // Plot color to the bitmap using the coördinates
-            bitmap.SetPixel(i, j, Color.FromArgb(
-                Clamp((int)(color.X * 255)),
-                Clamp((int)(color.Y * 255)),
-                Clamp((int)(color.Z * 255))));
-        }
-
-        // Clamp integer to minimum 0 and max 255
+        // Clamp integer to minimum 0
         int Clamp(int i)
         {
             if (i < 0) i = 0;
