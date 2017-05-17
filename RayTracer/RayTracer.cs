@@ -19,6 +19,7 @@ namespace RayTracer
         public Camera camera = new Camera();
         Scene scene = new Scene();
 
+        // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
         {
             Rectangle rect = new Rectangle(0, 0, 512, 512);
@@ -37,7 +38,7 @@ namespace RayTracer
                 for (int j = 0; j < 512; j++)
                 {
                     float x = ((float)j) / 512;
-                    float y = ((float)i) / 512;
+                    float y = ((float)j) / 512;
                     Ray ray = camera.MakeRay(x, y);
                     Vector3 color = Trace(ray);
                     *line++ = (uint) Color.FromArgb(
@@ -69,7 +70,7 @@ namespace RayTracer
             return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
         }
 
-        // Clamp integer to minimum 0
+        // Clamp integer to minimum 0 and max 255
         int Clamp(int i)
         {
             if (i < 0) i = 0;
