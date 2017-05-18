@@ -14,58 +14,31 @@ namespace RayTracer
 {
     public class RayTracer
     {
-        Bitmap image3D = new Bitmap(1024, 512);
+        Bitmap image3D = new Bitmap(512, 512);
+        Bitmap image2D = new Bitmap(512, 512);
 
         public Camera camera = new Camera();
         public Scene scene = new Scene();
 
+        float screenX0, screenX1, screenZ0, screenZ1, camX, camZ;
+        Graphics graphics2D;
+
         public unsafe Bitmap Render()
         {
-            Rectangle rect = new Rectangle(0, 0, 1024, 512);
-            // lock the bits
-            BitmapData bitmapData =
-                image3D.LockBits(rect, ImageLockMode.WriteOnly,
-                PixelFormat.Format32bppPArgb);
-
-            // Get the address of the first line.
-            uint* ptr = (uint*)bitmapData.Scan0;
-
-            for (int i = 0; i < 512; i++)
-            {
-                uint* line = ptr;
-
-                for (int j = 0; j < 512; j++)
-                {
-                    float x = ((float)j) / 512;
-                    float y = ((float)i) / 512;
-                    Ray ray = camera.MakeRay(x, y);
-                    Vector3 color = Trace(ray);
-                    *line++ = (uint) Color.FromArgb(
-                                        Clamp((int)(color.X * 255)),
-                                        Clamp((int)(color.Y * 255)),
-                                        Clamp((int)(color.Z * 255))
-                                     ).ToArgb();
-                }
-                // Set pointer to next line
-                ptr += bitmapData.Stride / 4;
-            }
-
-            // Unlock the bits.
-            image3D.UnlockBits(bitmapData);
+            graphics2D = Graphics.FromImage(image2D);
 
             // Debugview
-            Graphics graphics = Graphics.FromImage(image3D);
             Primitive[] primitives = scene.primitives;
 
             // Drawsize defines the actual size of the view, so you can add margin!
             int drawsize = 450;
             // Determine the top left corner of the view and flip coordinates so the origin is at the bottom of the screen
-            int topZ = 512 - ((image3D.Height - drawsize) / 2);
+            int topZ = 512 - ((image2D.Height - drawsize) / 2);
 
             // Camera
-            float camX = camera.pos.X + image3D.Width / 4 * 3;
-            float camZ = topZ + camera.pos.Z;
-            graphics.FillRectangle(Brushes.White, camX, camZ - 4, 2, 2);
+            camX = camera.pos.X + image2D.Width / 2;
+            camZ = topZ + camera.pos.Z;
+            graphics2D.FillRectangle(Brushes.White, camX, camZ - 4, 2, 2);
 
             // Determine furthest object from the camera for scale of the debugview
             float maxX = 0f;
@@ -97,8 +70,8 @@ namespace RayTracer
                         (int)primitive.material.color.Y * 255,
                         (int)primitive.material.color.Z * 255
                         );
-                    graphics.DrawEllipse(new Pen(color),
-                        (sphere.origin.X - sphere.r / 2) * scale + image3D.Width / 4 * 3, // 3/4 screen offset, which means center = middle of debug half
+                    graphics2D.DrawEllipse(new Pen(color),
+                        (sphere.origin.X - sphere.r / 2) * scale + image2D.Width / 2, // center drawing
                         topZ - (sphere.origin.Z - sphere.r) * scale,
                         sphere.r * scale,
                         sphere.r * scale);
@@ -108,14 +81,61 @@ namespace RayTracer
             // Screen
             Vector3 p0 = camera.p0;
             Vector3 p1 = camera.p1;
-            float offset = image3D.Width / 4 * 3 - p1.X - p0.X;
-            float screenX0 = p0.X * scale + offset;
-            float screenX1 = p1.X * scale + offset;
-            float screenY0 = topZ - p0.Z * scale;
-            float screenY1 = topZ - p1.Z * scale;
-            graphics.DrawLine(new Pen(Color.White), screenX0, screenY0, screenX1, screenY1);
+            float offset = image2D.Width / 2 - p1.X - p0.X;
+            screenX0 = p0.X * scale + offset;
+            screenX1 = p1.X * scale + offset;
+            screenZ0 = topZ - p0.Z * scale;
+            screenZ1 = topZ - p1.Z * scale;
+            graphics2D.DrawLine(new Pen(Color.White), screenX0, screenZ0, screenX1, screenZ1);
 
-            return image3D;
+            // 3D image
+            Rectangle rect = new Rectangle(0, 0, 512, 512);
+            // lock the bits
+            BitmapData bitmapData =
+                image3D.LockBits(rect, ImageLockMode.WriteOnly,
+                PixelFormat.Format32bppPArgb);
+
+            // Get the address of the first line.
+            uint* ptr = (uint*)bitmapData.Scan0;
+
+            for (int i = 0; i < 512; i++)
+            {
+                uint* line = ptr;
+
+                for (int j = 0; j < 512; j++)
+                {
+                    float x = ((float)j) / 512;
+                    float y = ((float)i) / 512;
+                    Ray ray = camera.MakeRay(x, y);
+                    Vector3 color = Trace(ray);
+                    *line++ = (uint) Color.FromArgb(
+                                        Clamp((int)(color.X * 255)),
+                                        Clamp((int)(color.Y * 255)),
+                                        Clamp((int)(color.Z * 255))
+                                     ).ToArgb();
+                    if(j % 32 == 0)
+                    {
+                        DebugLine(j);
+                    }
+                }
+                // Set pointer to next line
+                ptr += bitmapData.Stride / 4;
+            }
+
+            // Unlock the bits.
+            image3D.UnlockBits(bitmapData);
+
+            Bitmap combined = new Bitmap(1024, 512);
+            Graphics combinedGraphics = Graphics.FromImage(combined);
+            combinedGraphics.DrawImage(image3D, 0, 0);
+            combinedGraphics.DrawImage(image2D, 512, 0);
+
+            return combined;
+        }
+
+        private void DebugLine(float count)
+        {
+            graphics2D.DrawLine(new Pen(Color.Yellow), camX, camZ, 0, screenZ0);
         }
 
         Vector3 Trace(Ray ray)
