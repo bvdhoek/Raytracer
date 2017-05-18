@@ -57,7 +57,7 @@ namespace RayTracer
             return image3D;
         }
 
-        Vector3 Trace(Ray ray)
+        Vector3 Trace(Ray ray, bool reflected = false)
         {
             Intersection intersect = scene.Intersect(ray);
             if (intersect == null)
@@ -68,9 +68,12 @@ namespace RayTracer
             {
                 Ray mirrorRay = new Ray() { origin = intersect.intersectionPoint };
                 mirrorRay.direction = ray.direction - 2 * intersect.normal * (Vector3.Dot(ray.direction, intersect.normal));
-                return Trace(mirrorRay);
-            } // Not implemented yet; cast a mirror ray:
-            //   return intersect.primitive.material.color * Trace( );
+                mirrorRay.origin += 0.01f * mirrorRay.direction;
+                return 0.5f * Trace(mirrorRay, true) + 0.5f * scene.DirectIllumination(intersect) * intersect.primitive.material.color;
+            }
+            if (reflected)
+                throw new Exception();
+
             return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
         }
 

@@ -8,15 +8,16 @@ namespace RayTracer
     class Scene
     {
         private Primitive[] primitives = new Primitive[3];
-        private Light[] lights = new Light[1];
+        private Light[] lights = new Light[2];
 
         // Create new scene and populate with some default lights and primitives.
         public Scene()
         {
             this.lights[0] = new Light();
+            this.lights[1] = new Light(new Vector3(0,20,50));
 
             Vector3 spherePos = new Vector3(0, 0, 30);
-            this.primitives[0] = new Sphere(spherePos, 0.6f, new Vector3(1, 0, 0), true);
+            this.primitives[0] = new Sphere(spherePos, 2f, new Vector3(1, 0, 0), true);
 
             spherePos.X -= 2; spherePos.Z -= 5;
             this.primitives[1] = new Sphere(spherePos, 0.6f, new Vector3(0, 1, 0));
@@ -79,7 +80,7 @@ namespace RayTracer
             // No intersection happened so we can calculate light color/intensity:
             float dist = rayDirection.Length();
             float attenuation = 1 / (dist * dist);
-            return lights[0].color * Vector3.Dot(intersect.normal, shadowRay.direction) * attenuation;
+            return lights[i].color * Vector3.Dot(intersect.normal, shadowRay.direction) * attenuation;
         }
     }
 }
