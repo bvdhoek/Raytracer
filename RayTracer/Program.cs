@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
 using System.Numerics;
+using System;
 
 namespace RayTracer
 // dist = distance
@@ -24,9 +25,10 @@ namespace RayTracer
 
         public RayTracerForm(RayTracer rayTracer)
         {
+            Rectangle screenRectangle = RectangleToScreen(this.ClientRectangle);
             this.rayTracer = rayTracer;
             this.Width = 1024;
-            this.Height = 512;           
+            this.Height = 512 + screenRectangle.Top - this.Top;
         }
 
         protected override void OnPaint(PaintEventArgs e)

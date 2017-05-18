@@ -15,7 +15,7 @@ namespace RayTracer
     {
         Bitmap image3D = new Bitmap(512, 512);
 
-        Camera camera = new Camera();
+        public Camera camera = new Camera();
         public Scene scene = new Scene();
 
         public Bitmap Render()

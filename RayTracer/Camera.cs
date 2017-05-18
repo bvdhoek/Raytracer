@@ -2,18 +2,18 @@
 
 namespace RayTracer
 {
-    class Camera
+    public class Camera
     {
         // Camera position
-        Vector3 pos = new Vector3(0, 0, 0);
+        public Vector3 pos = new Vector3(0, 0, 0);
 
         // Camera direction
-        Vector3 d = new Vector3(0, 0, 1);
+        public Vector3 d = new Vector3(0, 0, 1);
 
         Vector3 screenCenter;
 
         // Screen corners:
-        Vector3 p0, p1, p2;
+        public Vector3 p0, p1, p2;
 
         public Camera()
         {

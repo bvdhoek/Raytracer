@@ -6,7 +6,7 @@ namespace RayTracer
     class Sphere : Primitive
     {
         // Radius
-        private float r;
+        public float r;
 
         public Sphere(Vector3 origin, float r) : base(origin)
         {
