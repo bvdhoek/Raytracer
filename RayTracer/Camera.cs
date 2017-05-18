@@ -23,9 +23,9 @@ namespace RayTracer
         private void setScreen()
         {
             this.screenCenter = pos + 10 * d;
-            p0 = screenCenter + new Vector3(-1, -1, 0);
-            p1 = screenCenter + new Vector3(1, -1, 0);
-            p2 = screenCenter + new Vector3(-1, 1, 0);
+            p0 = screenCenter + new Vector3(-1, 1, 0);
+            p1 = screenCenter + new Vector3(1, 1, 0);
+            p2 = screenCenter + new Vector3(-1, -1, 0);
         }
 
         public void Zoom(float scalar)
