@@ -23,6 +23,7 @@ namespace RayTracer
         float screenX0, screenX1, screenZ0, screenZ1, camX, camZ;
         Graphics graphics2D;
 
+        // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
         {
             graphics2D = Graphics.FromImage(image2D);
@@ -141,17 +142,34 @@ namespace RayTracer
         Vector3 Trace(Ray ray)
         {
             Intersection intersect = scene.Intersect(ray);
+            Vector3 color = new Vector3(0, 0, 0);
+
             if (intersect == null)
             {
-                return new Vector3(0, 0, 0);
+                return color;
             }
+
             if (intersect.primitive.material.isMirror)
-            { } // Not implemented yet; cast a mirror ray:
-            //   return intersect.primitive.material.color * Trace( );
-            return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
+            {
+                Ray mirrorRay = new Ray() { origin = intersect.intersectionPoint };
+                mirrorRay.direction = ray.direction - 2 * intersect.normal * (Vector3.Dot(ray.direction, intersect.normal));
+                mirrorRay.origin += 0.01f * mirrorRay.direction;
+                color += intersect.primitive.material.reflectiveness * Trace(mirrorRay);
+            }
+            if (intersect.primitive.material.isTransparent)
+            {
+                // Calculate refraction
+                color += intersect.primitive.material.transparency * Trace(ray);
+            }
+            if(intersect.primitive.material.isShiny)
+            {
+                // Calculate reflection of shiny object
+            }
+            color += intersect.primitive.material.diffuseness * scene.DirectIllumination(intersect) * intersect.primitive.material.color;
+            return color;
         }
 
-        // Clamp integer to minimum 0
+        // Clamp integer to minimum 0 and max 255
         int Clamp(int i)
         {
             if (i < 0) i = 0;

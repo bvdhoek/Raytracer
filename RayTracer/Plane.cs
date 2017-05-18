@@ -20,17 +20,13 @@ namespace RayTracer
 
         public override Intersection Intersect(Ray ray)
         {
-            // assuming vectors are all normalized
             float denom = Vector3.Dot(normal, ray.direction);
-            if (denom > 1e-6)
+            Vector3 rayToPlane = origin - ray.origin;
+            float t = Vector3.Dot(rayToPlane, normal) / denom;
+            if (t >= 0)
             {
-                Vector3 rayToPlane = origin - ray.origin;
-                float t = Vector3.Dot(rayToPlane, normal) / denom;
-                if (t >= 0)
-                {
-                    if (t < ray.t) ray.t = t;
-                    return new Intersection(this, normal, ray.t * ray.direction, ray.t);
-                }
+                if (t < ray.t) ray.t = t;
+                return new Intersection(this, normal, ray.t * ray.direction, ray.t);
             }
             return null;
         }
