@@ -13,12 +13,12 @@ namespace RayTracer
             this.r = r;
         }
 
-        public Sphere(Vector3 origin, float r, Vector3 color) : base(origin, color)
-        {
-            this.r = r;
-        }
-
-        public Sphere(Vector3 origin, float r, Vector3 color, bool isMirror) : base(origin, color, isMirror)
+        public Sphere(Vector3 origin, 
+            float r, 
+            Vector3 color,
+            float reflectiveness = 0, 
+            float transparancy = 0, 
+            float shine = 0) : base(origin, color, reflectiveness, transparancy, shine)
         {
             this.r = r;
         }
@@ -31,7 +31,7 @@ namespace RayTracer
             Vector3 q = c - t * ray.direction;
             float p2 = Vector3.Dot(q, q);
 
-            if (p2 > r * r) 
+            if (p2 > r * r)
             { // We didn't hit the sphere.
                 return null;
             }
@@ -44,9 +44,9 @@ namespace RayTracer
             }
             else return null;
             // return a new intersect with: this, the normal to the sphere, the intersection point, the distance
-            return new Intersection(this, 
-                Vector3.Normalize(ray.t * ray.direction - origin), 
-                ray.origin + ray.direction * ray.t, 
+            return new Intersection(this,
+                Vector3.Normalize((ray.origin + ray.t * ray.direction) - origin),
+                ray.origin + ray.direction * ray.t,
                 ray.t);
         }
     }

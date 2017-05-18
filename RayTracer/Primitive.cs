@@ -11,13 +11,13 @@ namespace RayTracer
         {
             this.origin = origin;
             // default color is red.
-            material.SetColor(new Vector3(1, 0, 0), false);
+            material.SetColor(new Vector3(1, 0, 0));
         }
 
-        public Primitive(Vector3 origin, Vector3 color, bool isMirror = false)
+        public Primitive(Vector3 origin, Vector3 color, float reflectiveness = 0, float transparancy = 0, float shine = 0)
         {
             this.origin = origin;
-            material.SetColor(color, isMirror);
+            material.SetColor(color, reflectiveness, transparancy, shine);
         }
 
         public abstract Intersection Intersect(Ray ray);

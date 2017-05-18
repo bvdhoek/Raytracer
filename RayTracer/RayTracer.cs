@@ -57,24 +57,34 @@ namespace RayTracer
             return image3D;
         }
 
-        Vector3 Trace(Ray ray, bool reflected = false)
+        Vector3 Trace(Ray ray)
         {
             Intersection intersect = scene.Intersect(ray);
+            Vector3 color = new Vector3(0, 0, 0);
+
             if (intersect == null)
             {
-                return new Vector3(0, 0, 0);
+                return color;
             }
+
             if (intersect.primitive.material.isMirror)
             {
                 Ray mirrorRay = new Ray() { origin = intersect.intersectionPoint };
                 mirrorRay.direction = ray.direction - 2 * intersect.normal * (Vector3.Dot(ray.direction, intersect.normal));
                 mirrorRay.origin += 0.01f * mirrorRay.direction;
-                return 0.5f * Trace(mirrorRay, true) + 0.5f * scene.DirectIllumination(intersect) * intersect.primitive.material.color;
+                color += intersect.primitive.material.reflectiveness * Trace(mirrorRay);
             }
-            if (reflected)
-                throw new Exception();
-
-            return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
+            if (intersect.primitive.material.isTransparent)
+            {
+                // Calculate refraction
+                color += intersect.primitive.material.transparency * Trace(ray);
+            }
+            if(intersect.primitive.material.isShiny)
+            {
+                // Calculate reflection of shiny object
+            }
+            color += intersect.primitive.material.diffuseness * scene.DirectIllumination(intersect) * intersect.primitive.material.color;
+            return color;
         }
 
         // Clamp integer to minimum 0 and max 255
