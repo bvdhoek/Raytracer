@@ -76,12 +76,6 @@ namespace RayTracer
             base.OnPaint(e);
         }
 
-        private void PlotPixel(Bitmap bitmap, Vector3 color, int i, int j)
-        {
-            // Plot color to the bitmap using the coördinates
-            bitmap.SetPixel(i, j, Color.FromArgb(Clamp((int)(color.X * 255)), Clamp((int)(color.Y * 255)), Clamp((int)(color.Z * 255))));
-        }
-
         int Clamp(int i)
         {
             if (i < 0) i = 0;
