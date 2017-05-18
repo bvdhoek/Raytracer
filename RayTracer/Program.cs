@@ -73,7 +73,6 @@ namespace RayTracer
         {
             Image image = rayTracer.Render();
             e.Graphics.DrawImage(image, 0, 0);
-            base.OnPaint(e);
         }
 
         int Clamp(int i)
