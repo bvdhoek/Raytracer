@@ -26,7 +26,7 @@ namespace RayTracer
         // TODO: Implement when materials are implemented
         public bool IsMirror()
         {
-            return false;
+            return material.isMirror;
         }
     }
 }

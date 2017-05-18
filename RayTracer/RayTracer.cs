@@ -38,7 +38,7 @@ namespace RayTracer
                 for (int j = 0; j < 512; j++)
                 {
                     float x = ((float)j) / 512;
-                    float y = ((float)j) / 512;
+                    float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
                     Vector3 color = Trace(ray);
                     *line++ = (uint) Color.FromArgb(
@@ -65,7 +65,11 @@ namespace RayTracer
                 return new Vector3(0, 0, 0);
             }
             if (intersect.primitive.material.isMirror)
-            { } // Not implemented yet; cast a mirror ray:
+            {
+                Ray mirrorRay = new Ray() { origin = intersect.intersectionPoint };
+                mirrorRay.direction = ray.direction - 2 * intersect.normal * (Vector3.Dot(ray.direction, intersect.normal));
+                return Trace(mirrorRay);
+            } // Not implemented yet; cast a mirror ray:
             //   return intersect.primitive.material.color * Trace( );
             return scene.DirectIllumination(intersect) * intersect.primitive.material.color;
         }
