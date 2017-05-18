@@ -28,7 +28,7 @@ namespace RayTracer
             Rectangle screenRectangle = RectangleToScreen(this.ClientRectangle);
             this.rayTracer = rayTracer;
             this.Width = 1024;
-            this.Height = 512;
+            this.Height = 512 + screenRectangle.Top - this.Top;
             this.SetStyle(ControlStyles.DoubleBuffer |
                           ControlStyles.UserPaint |
                           ControlStyles.AllPaintingInWmPaint,
@@ -73,16 +73,12 @@ namespace RayTracer
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            Image image = rayTracer.Render();
-            e.Graphics.DrawImage(image, 0, 0);
-            
             // ♫♫ I see a blank background and i want to paint it black... ♫♫
             e.Graphics.FillRectangle(Brushes.Black, 512, 0, 512, 512);
 
-            // Debug view
-            DebugView debugView = new DebugView();
-            Image view = (Image) debugView.Render(rayTracer);
-            e.Graphics.DrawImage(view, 512, 0, 512, 512);
+            Image image = rayTracer.Render();
+            e.Graphics.DrawImage(image, 0, 0);
+
             base.OnPaint(e);
         }
 

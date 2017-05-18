@@ -14,14 +14,14 @@ namespace RayTracer
 {
     public class RayTracer
     {
-        Bitmap image3D = new Bitmap(512, 512);
+        Bitmap image3D = new Bitmap(1024, 512);
 
         public Camera camera = new Camera();
         public Scene scene = new Scene();
 
         public unsafe Bitmap Render()
         {
-            Rectangle rect = new Rectangle(0, 0, 512, 512);
+            Rectangle rect = new Rectangle(0, 0, 1024, 512);
             // lock the bits
             BitmapData bitmapData =
                 image3D.LockBits(rect, ImageLockMode.WriteOnly,
@@ -52,6 +52,68 @@ namespace RayTracer
 
             // Unlock the bits.
             image3D.UnlockBits(bitmapData);
+
+            // Debugview
+            Graphics graphics = Graphics.FromImage(image3D);
+            Primitive[] primitives = scene.primitives;
+
+            // Drawsize defines the actual size of the view, so you can add margin!
+            int drawsize = 450;
+            // Determine the top left corner of the view and flip coordinates so the origin is at the bottom of the screen
+            int topZ = 512 - ((image3D.Height - drawsize) / 2);
+
+            // Camera
+            float camX = camera.pos.X + image3D.Width / 4 * 3;
+            float camZ = topZ + camera.pos.Z;
+            graphics.FillRectangle(Brushes.White, camX, camZ - 4, 2, 2);
+
+            // Determine furthest object from the camera for scale of the debugview
+            float maxX = 0f;
+            float maxZ = 0f;
+            foreach (Primitive primitive in primitives)
+            {
+                if (Math.Abs(primitive.origin.X) - Math.Abs(camera.pos.X) + ((Sphere)primitive).r > Math.Abs(maxX))
+                {
+                    maxX = Math.Abs(primitive.origin.X) - Math.Abs(camera.pos.X) + ((Sphere)primitive).r;
+                }
+
+                if (Math.Abs(primitive.origin.Z) - Math.Abs(camera.pos.Z) + ((Sphere)primitive).r > Math.Abs(maxZ))
+                {
+                    maxZ = Math.Abs(primitive.origin.Z) - Math.Abs(camera.pos.Z) + ((Sphere)primitive).r;
+                }
+            }
+
+            float max = maxX > maxZ ? maxX : maxZ;
+            float scale = drawsize / max;
+
+            // Objects
+            foreach (Primitive primitive in primitives)
+            {
+                if (primitive.GetType() == typeof(Sphere))
+                {
+                    Sphere sphere = (Sphere)primitive;
+                    Color color = Color.FromArgb(
+                        (int)primitive.material.color.X * 255,
+                        (int)primitive.material.color.Y * 255,
+                        (int)primitive.material.color.Z * 255
+                        );
+                    graphics.DrawEllipse(new Pen(color),
+                        (sphere.origin.X - sphere.r / 2) * scale + image3D.Width / 4 * 3, // 3/4 screen offset, which means center = middle of debug half
+                        topZ - (sphere.origin.Z - sphere.r) * scale,
+                        sphere.r * scale,
+                        sphere.r * scale);
+                }
+            }
+
+            // Screen
+            Vector3 p0 = camera.p0;
+            Vector3 p1 = camera.p1;
+            float offset = image3D.Width / 4 * 3 - p1.X - p0.X;
+            float screenX0 = p0.X * scale + offset;
+            float screenX1 = p1.X * scale + offset;
+            float screenY0 = topZ - p0.Z * scale;
+            float screenY1 = topZ - p1.Z * scale;
+            graphics.DrawLine(new Pen(Color.White), screenX0, screenY0, screenX1, screenY1);
 
             return image3D;
         }
