@@ -6,7 +6,7 @@ namespace RayTracer {
     //method, which loops over the primitives and returns the closest intersection
     public class Scene
     {
-        private Primitive[] primitives = new Primitive[4];
+        public Primitive[] primitives = new Primitive[4];
         private Light[] lights = new Light[1];
 
         // Create new scene and populate with some default lights and primitives.

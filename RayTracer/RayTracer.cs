@@ -15,50 +15,55 @@ namespace RayTracer
     public class RayTracer
     {
         Bitmap image3D = new Bitmap(512, 512);
-        Bitmap image2D = new Bitmap(512, 512);
+        Bitmap image2D;
 
         public Camera camera = new Camera();
         public Scene scene = new Scene();
 
-        float screenX0, screenX1, screenZ0, screenZ1, camX, camZ;
+        float screenX0, screenX1, screenZ0, screenZ1, camX, camZ, scale, topZ;
         Graphics graphics2D;
+        int drawsize;
 
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
         {
+            image2D = new Bitmap(512, 512);
             graphics2D = Graphics.FromImage(image2D);
 
             // Debugview
             Primitive[] primitives = scene.primitives;
 
             // Drawsize defines the actual size of the view, so you can add margin!
-            int drawsize = 450;
+            drawsize = 512;
             // Determine the top left corner of the view and flip coordinates so the origin is at the bottom of the screen
-            int topZ = 512 - ((image2D.Height - drawsize) / 2);
+            topZ = 512 - ((image2D.Height - drawsize) / 2);
 
             // Camera
             camX = camera.pos.X + image2D.Width / 2;
             camZ = topZ + camera.pos.Z;
-            graphics2D.FillRectangle(Brushes.White, camX, camZ - 4, 2, 2);
+            graphics2D.FillRectangle(Brushes.White, camX, camZ, 1, 1);
 
             // Determine furthest object from the camera for scale of the debugview
             float maxX = 0f;
             float maxZ = 0f;
             foreach (Primitive primitive in primitives)
             {
-                if (Math.Abs(primitive.origin.X) - Math.Abs(camera.pos.X) + ((Sphere)primitive).r > Math.Abs(maxX))
+                if (primitive.GetType() == typeof(Sphere))
                 {
-                    maxX = Math.Abs(primitive.origin.X) - Math.Abs(camera.pos.X) + ((Sphere)primitive).r;
-                }
+                    if (Math.Abs(primitive.origin.X) - Math.Abs(camera.pos.X) + ((Sphere)primitive).r > Math.Abs(maxX))
+                    {
+                        maxX = Math.Abs(primitive.origin.X) - Math.Abs(camera.pos.X) + ((Sphere)primitive).r;
+                    }
 
-                if (Math.Abs(primitive.origin.Z) - Math.Abs(camera.pos.Z) + ((Sphere)primitive).r > Math.Abs(maxZ))
-                {
-                    maxZ = Math.Abs(primitive.origin.Z) - Math.Abs(camera.pos.Z) + ((Sphere)primitive).r;
+                    if (Math.Abs(primitive.origin.Z) - Math.Abs(camera.pos.Z) + ((Sphere)primitive).r > Math.Abs(maxZ))
+                    {
+                        maxZ = Math.Abs(primitive.origin.Z) - Math.Abs(camera.pos.Z) + ((Sphere)primitive).r;
+                    }
                 }
             }
 
             float max = maxX > maxZ ? maxX : maxZ;
-            float scale = drawsize / max;
+            scale = drawsize / max;
 
             // Objects
             foreach (Primitive primitive in primitives)
@@ -108,16 +113,12 @@ namespace RayTracer
                     float x = ((float)j) / 512;
                     float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
-                    Vector3 color = Trace(ray);
+                    Vector3 color = Trace(ray, j % 64 == 0);
                     *line++ = (uint) Color.FromArgb(
                                         Clamp((int)(color.X * 255)),
                                         Clamp((int)(color.Y * 255)),
                                         Clamp((int)(color.Z * 255))
                                      ).ToArgb();
-                    if(j % 32 == 0)
-                    {
-                        DebugLine(j);
-                    }
                 }
                 // Set pointer to next line
                 ptr += bitmapData.Stride / 4;
@@ -134,15 +135,26 @@ namespace RayTracer
             return combined;
         }
 
-        private void DebugLine(float count)
+        private void DebugLine(float x, float z, bool intersect)
         {
-            graphics2D.DrawLine(new Pen(Color.Yellow), camX, camZ, 0, screenZ0);
+            graphics2D.DrawLine(intersect ? new Pen(Color.Red) : new Pen(Color.Yellow), camX, camZ, x * scale + image2D.Width / 2, topZ - z * scale);
         }
 
-        Vector3 Trace(Ray ray)
+        Vector3 Trace(Ray ray, bool drawRay)
         {
             Intersection intersect = scene.Intersect(ray);
             Vector3 color = new Vector3(0, 0, 0);
+
+            if (drawRay)
+            {
+                if(intersect == null)
+                {
+                    //DebugLine(ray.direction.X, 0, false);
+                } else
+                {
+                    DebugLine(intersect.intersectionPoint.X, intersect.intersectionPoint.Z, true);
+                }
+            }
 
             if (intersect == null)
             {
@@ -154,12 +166,12 @@ namespace RayTracer
                 Ray mirrorRay = new Ray() { origin = intersect.intersectionPoint };
                 mirrorRay.direction = ray.direction - 2 * intersect.normal * (Vector3.Dot(ray.direction, intersect.normal));
                 mirrorRay.origin += 0.01f * mirrorRay.direction;
-                color += intersect.primitive.material.reflectiveness * Trace(mirrorRay);
+                color += intersect.primitive.material.reflectiveness * Trace(mirrorRay, false);
             }
             if (intersect.primitive.material.isTransparent)
             {
                 // Calculate refraction
-                color += intersect.primitive.material.transparency * Trace(ray);
+                color += intersect.primitive.material.transparency * Trace(ray, false);
             }
             if(intersect.primitive.material.isShiny)
             {
