@@ -8,12 +8,12 @@ namespace RayTracer
         // normal of the plane
         private Vector3 normal;
 
-        public Plane(Vector3 normal, Vector3 origin) : base(origin)
+        public Plane(Vector3 normal, Vector3 origin) : base(origin, new Vector3(1, 1, 0), 0.5f)
         {
             this.normal = normal;
         }
 
-        public Plane(Vector3 normal, Vector3 origin, Vector3 color) : base(origin, color)
+        public Plane(Vector3 normal, Vector3 origin, Vector3 color) : base(origin, color, 0.5f)
         {
             this.normal = normal;
         }
