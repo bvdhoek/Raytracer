@@ -2,7 +2,7 @@
 
 namespace RayTracer
 {
-    class Intersection
+    public class Intersection
     {
         // Primitive we intersected
         public Primitive primitive { get; private set; }

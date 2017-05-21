@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
 using System.Numerics;
+using System;
 
 namespace RayTracer
 // dist = distance
@@ -24,9 +25,10 @@ namespace RayTracer
 
         public RayTracerForm(RayTracer rayTracer)
         {
+            Rectangle screenRectangle = RectangleToScreen(this.ClientRectangle);
             this.rayTracer = rayTracer;
             this.Width = 1024;
-            this.Height = 512;
+            this.Height = 512 + screenRectangle.Top - this.Top;
             this.SetStyle(ControlStyles.DoubleBuffer |
                           ControlStyles.UserPaint |
                           ControlStyles.AllPaintingInWmPaint,
@@ -71,8 +73,12 @@ namespace RayTracer
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            // ♫♫ I see a blank background and i want to paint it black... ♫♫
+            e.Graphics.FillRectangle(Brushes.Black, 512, 0, 512, 512);
+
             Image image = rayTracer.Render();
             e.Graphics.DrawImage(image, 0, 0);
+            base.OnPaint(e);
         }
 
         int Clamp(int i)
@@ -83,4 +89,3 @@ namespace RayTracer
         }
     }
 }
-

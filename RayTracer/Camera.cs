@@ -5,7 +5,7 @@ namespace RayTracer
     public class Camera
     {
         // Camera position
-        Vector3 pos = new Vector3(0, 0, 0);
+        public Vector3 pos = new Vector3(0, 0, 0);
 
         // Camera direction
         public Vector3 d = new Vector3(0, 0, 1);
@@ -13,7 +13,7 @@ namespace RayTracer
         Vector3 screenCenter;
 
         // Screen corners:
-        Vector3 p0, p1, p2;
+        public Vector3 p0, p1, p2;
 
         public Camera()
         {
@@ -22,7 +22,7 @@ namespace RayTracer
 
         private void setScreen()
         {
-            this.screenCenter = pos + 10 * d;
+            this.screenCenter = pos + 2 * d;
             p0 = screenCenter + new Vector3(-1, 1, 0);
             p1 = screenCenter + new Vector3(1, 1, 0);
             p2 = screenCenter + new Vector3(-1, -1, 0);

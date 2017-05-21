@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Debugger.cs" />
     <Compile Include="Intersection.cs" />
     <Compile Include="Light.cs" />
     <Compile Include="Material.cs" />

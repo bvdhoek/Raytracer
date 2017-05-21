@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Numerics;
 
-namespace RayTracer
-{
-    // Scene, which stores a list of primitives and light sources.It implements a scene-level Intersect
-    // method, which loops over the primitives and returns the closest intersection
-    class Scene
+namespace RayTracer {
+    //    Scene, which stores a list of primitives and light sources.It implements a scene-level Intersect
+    //method, which loops over the primitives and returns the closest intersection
+    public class Scene
     {
-        private Primitive[] primitives = new Primitive[4];
+        public Primitive[] primitives = new Primitive[4];
         private Light[] lights = new Light[1];
 
         // Create new scene and populate with some default lights and primitives.
@@ -15,9 +14,10 @@ namespace RayTracer
         {
             this.lights[0] = new Light();
 
-            Vector3 spherePos = new Vector3(0, 0, 30);
-            this.primitives[0] = new Sphere(spherePos, 0.5f);
+            Vector3 spherePos = new Vector3(0, 0, 7);
+            this.primitives[0] = new Sphere(spherePos, 1f, new Vector3(1, 0, 1), 0.5f);
 
+            spherePos.Z -= 2;
             spherePos.X -= 2;
             this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0));
 
