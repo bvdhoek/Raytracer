@@ -45,7 +45,7 @@ namespace RayTracer
                     float x = ((float)j) / 512;
                     float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
-                    Vector3 color = Trace(ray, i == 256 && j % 16 == 0);
+                    Vector3 color = Trace(ray, i == 256 && j % 16 ==0);
                     *line++ = (uint) Color.FromArgb(
                                         Clamp((int)(color.X * 255)),
                                         Clamp((int)(color.Y * 255)),
@@ -73,24 +73,29 @@ namespace RayTracer
             // ... and see if it hits anything.
             Intersection intersect = scene.Intersect(ray);
 
+            // Draw some debug output if it does hit anything.
+            if (drawDebugLine)
+            {
+                if(intersect != null)
+                debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, intersect.intersectionPoint.X, intersect.intersectionPoint.Z, true);
+                else
+                debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.direction.X * 100, ray.direction.Z * 100, false);
+            }
+
             Vector3 color = new Vector3(0, 0, 0);
             if (intersect == null)
             {
                 return color;
             }
 
-            // Draw some debug output if it does hit anything.
-            if (drawDebugLine)
-            {
-                debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, intersect.intersectionPoint.X, intersect.intersectionPoint.Z, true);
-            }
-
             if (intersect.primitive.material.isMirror)
             {
                 Ray mirrorRay = new Ray() { origin = intersect.intersectionPoint };
-                mirrorRay.direction = ray.direction - 2 * intersect.normal * (Vector3.Dot(ray.direction, intersect.normal));
+                mirrorRay.direction = ray.direction - 2 * (intersect.normal)
+                    * (Vector3.Dot(ray.direction, intersect.normal));
                 mirrorRay.origin += 0.01f * mirrorRay.direction;
-                color += intersect.primitive.material.reflectiveness * Trace(mirrorRay, true);
+                mirrorRay.t = float.MaxValue;
+                color += intersect.primitive.material.reflectiveness * Trace(mirrorRay, drawDebugLine);
             }
             if (intersect.primitive.material.isTransparent)
             {
