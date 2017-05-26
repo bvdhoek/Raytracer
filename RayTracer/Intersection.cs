@@ -23,5 +23,10 @@ namespace RayTracer
             this.intersectionPoint = intersectionPoint;
             this.dist = dist;
         }
+
+        public Material GetMaterial()
+        {
+            return this.primitive.material;
+        }
     }
 }

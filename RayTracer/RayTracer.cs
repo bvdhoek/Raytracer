@@ -21,6 +21,9 @@ namespace RayTracer
         public Camera camera = new Camera();
         public Scene scene = new Scene();
 
+        // maximum recursion depth
+        short maxDepth = 4;
+
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
         {
@@ -45,7 +48,7 @@ namespace RayTracer
                     float x = ((float)j) / 512;
                     float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
-                    Vector3 color = Trace(ray, i == 256 && j % 16 ==0);
+                    Vector3 color = Trace(ray, 0, i == 256 && j % 16 ==0);
                     *line++ = (uint) Color.FromArgb(
                                         Clamp((int)(color.X * 255)),
                                         Clamp((int)(color.Y * 255)),
@@ -68,12 +71,20 @@ namespace RayTracer
         }
 
         // This is where the magic happens! Trace a ray...
-        Vector3 Trace(Ray ray, bool drawDebugLine)
+        Vector3 Trace(Ray ray, short depth, bool drawDebugLine)
         {
-            // ... and see if it hits anything.
+            // Background color. This will be the color of the skydome once that's implemented
+            Vector3 color = new Vector3(0, 0, 0);
+
+            if (depth == maxDepth)
+            {
+                return color;
+            }
+
+            // see if the ray hits anything.
             Intersection intersect = scene.Intersect(ray);
 
-            // Draw some debug output if it does hit anything.
+            // Draw some debug output.
             if (drawDebugLine)
             {
                 if(intersect != null)
@@ -82,32 +93,67 @@ namespace RayTracer
                 debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.direction.X * 100, ray.direction.Z * 100, false);
             }
 
-            Vector3 color = new Vector3(0, 0, 0);
             if (intersect == null)
             {
                 return color;
             }
+            depth++; // increment our recursion depth.
+            Material material = intersect.GetMaterial();
 
-            if (intersect.primitive.material.isMirror)
+            if (material.isMirror)
             {
-                Ray mirrorRay = new Ray() { origin = intersect.intersectionPoint };
-                mirrorRay.direction = ray.direction - 2 * (intersect.normal)
-                    * (Vector3.Dot(ray.direction, intersect.normal));
-                mirrorRay.origin += 0.01f * mirrorRay.direction;
-                mirrorRay.t = float.MaxValue;
-                color += intersect.primitive.material.reflectiveness * Trace(mirrorRay, drawDebugLine);
+                color += material.reflectiveness * Trace(Reflect(ray, intersect), depth, drawDebugLine);
             }
-            if (intersect.primitive.material.isTransparent)
+            if (material.isDielectic)
             {
-                // Calculate refraction
-                color += intersect.primitive.material.transparency * Trace(ray, false);
+                // Calculate some neccessary variables:
+                float r0Root = (1 - material.refractionIndex) / (1 + material.refractionIndex);
+                float r0 = r0Root * r0Root; // r0
+                float oneMinusCos = 1 - Vector3.Dot(intersect.normal, ray.direction); // (1 - cos alpha)
+
+                // Calculate how much light is reflected:
+                float reflection = r0 + (1 - r0) * oneMinusCos * oneMinusCos * oneMinusCos * oneMinusCos * oneMinusCos;
+                // ... and how much light is refracted
+                float refraction = 1 - reflection;
+
+                // Now do the magic:
+                color += material.transparency * reflection * Trace(Reflect(ray, intersect), depth, false); // reFLECT
+                color += material.transparency * refraction * Trace(Refract(ray, intersect), depth, drawDebugLine); //reFRACT
             }
-            if(intersect.primitive.material.isShiny)
+            if(material.isShiny)
             {
                 // Calculate reflection of shiny object
             }
-            color += intersect.primitive.material.diffuseness * scene.DirectIllumination(intersect) * intersect.primitive.material.color;
+            color += material.diffuseness * scene.DirectIllumination(intersect) * material.color;
             return color;
+        }
+
+        private Ray Refract(Ray ray, Intersection intersect)
+        {
+            float c1 = Vector3.Dot(intersect.normal, ray.direction);
+            float c2 = (float)Math.Sqrt(1 - (intersect.primitive.material.e * intersect.primitive.material.e) * (1 - (c1 * c1)));
+            Ray refractRay = new Ray()
+            {
+                direction = (intersect.primitive.material.e * ray.direction) 
+                    + ((intersect.primitive.material.e * (c1 - c2)) * intersect.normal),
+                origin = intersect.intersectionPoint,
+                t = float.MaxValue
+            };
+            refractRay.origin += 0.001f * refractRay.direction;
+            return refractRay;
+        }
+
+        private Ray Reflect(Ray ray, Intersection intersect)
+        {
+            Ray mirrorRay = new Ray()
+            {
+                origin = intersect.intersectionPoint,
+                direction = ray.direction - 2 * (intersect.normal) * (Vector3.Dot(ray.direction, intersect.normal)),
+                t = float.MaxValue
+            };
+
+            mirrorRay.origin += 0.01f * mirrorRay.direction; // offset by a small margin
+            return mirrorRay;
         }
 
         // Clamp integer to minimum 0 and max 255

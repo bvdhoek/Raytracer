@@ -7,7 +7,7 @@ namespace RayTracer
     {
         public Vector3 color { get; private set; }
         public bool isMirror { get; private set; }
-        public bool isTransparent { get; private set; }
+        public bool isDielectic { get; private set; }
         public bool isShiny { get; private set; }
 
         // the extend to which this material reflects light
@@ -19,9 +19,14 @@ namespace RayTracer
         // diffuseness. equals 1 - (all other components)
         public float diffuseness { get; private set; }
 
+        public float refractionIndex = 1.5f; // glass
+
+        public float e; // 1 over refraction index
+
         public Material()
         {
             this.diffuseness = 1;
+            this.e = 1 / refractionIndex;
         }
 
         internal void SetColor(Vector3 color, float reflectiveness = 0, float transparency = 0, float shine = 0)
@@ -37,7 +42,7 @@ namespace RayTracer
             this.shine = shine;
 
             if (reflectiveness > 0) this.isMirror = true;
-            if (transparency > 0) this.isTransparent = true;
+            if (transparency > 0) this.isDielectic = true;
             if (shine > 0) this.isShiny = true;
 
             this.diffuseness = 1 - reflectiveness - transparency - shine;
