@@ -69,7 +69,7 @@ namespace RayTracer
                 }
             }
 
-            float max = maxX > maxZ ? maxX : maxZ;
+            float max = maxX > maxZ ? maxX : maxZ + 2;
             scale = image2D.Width / max;
         }
 

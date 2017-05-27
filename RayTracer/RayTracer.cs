@@ -48,8 +48,8 @@ namespace RayTracer
                     float x = ((float)j) / 512;
                     float y = ((float)i) / 512;
                     Ray ray = camera.MakeRay(x, y);
-                    Vector3 color = Trace(ray, 0, i == 256 && j % 16 ==0);
-                    *line++ = (uint) Color.FromArgb(
+                    Vector3 color = Trace(ray, 0, i == 256 && j % 32 == 0);
+                    *line++ = (uint)Color.FromArgb(
                                         Clamp((int)(color.X * 255)),
                                         Clamp((int)(color.Y * 255)),
                                         Clamp((int)(color.Z * 255))
@@ -74,11 +74,11 @@ namespace RayTracer
         Vector3 Trace(Ray ray, short depth, bool drawDebugLine)
         {
             // Background color. This will be the color of the skydome once that's implemented
-            Vector3 color = new Vector3(0, 0, 0);
+            Vector3 backgroundColor = new Vector3(0, 0, 0);
 
             if (depth == maxDepth)
             {
-                return color;
+                return backgroundColor;
             }
 
             // see if the ray hits anything.
@@ -87,22 +87,30 @@ namespace RayTracer
             // Draw some debug output.
             if (drawDebugLine)
             {
-                if(intersect != null)
-                debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, intersect.intersectionPoint.X, intersect.intersectionPoint.Z, true);
+                if (intersect == null)
+                    debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.origin.X + ray.direction.X * 100, ray.origin.Z + ray.direction.Z * 100, true);
                 else
-                debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.direction.X * 100, ray.direction.Z * 100, false);
+                    debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, intersect.intersectionPoint.X, intersect.intersectionPoint.Z, false);
             }
 
             if (intersect == null)
             {
-                return color;
+                return backgroundColor;
             }
+
+            // Magic!
+            return DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);         
+        }
+
+        // Do we have to pass all these ugly arguments? ='( 
+        // If we want to multi-thread it: yes.
+        private Vector3 DoFancyColorCalculations(Ray ray, Intersection intersect, Vector3 color, short depth, bool drawDebugLine)
+        {
             depth++; // increment our recursion depth.
             Material material = intersect.GetMaterial();
-
             if (material.isMirror)
             {
-                color += material.reflectiveness * Trace(Reflect(ray, intersect), depth, drawDebugLine);
+                color += material.reflectiveness * Reflect(ray, intersect, depth, drawDebugLine);
             }
             if (material.isDielectic)
             {
@@ -117,33 +125,45 @@ namespace RayTracer
                 float refraction = 1 - reflection;
 
                 // Now do the magic:
-                color += material.transparency * reflection * Trace(Reflect(ray, intersect), depth, false); // reFLECT
-                color += material.transparency * refraction * Trace(Refract(ray, intersect), depth, drawDebugLine); //reFRACT
+                color += material.transparency * reflection * Reflect(ray, intersect, depth, drawDebugLine); // reFLECT
+                color += material.transparency * refraction * Refract(ray, intersect, depth, drawDebugLine); //reFRACT
             }
-            if(material.isShiny)
+            if (material.isShiny)
             {
                 // Calculate reflection of shiny object
             }
-            color += material.diffuseness * scene.DirectIllumination(intersect) * material.color;
+
+            color += intersect.primitive.material.diffuseness * scene.DirectIllumination(intersect) * intersect.primitive.material.color;
             return color;
         }
 
-        private Ray Refract(Ray ray, Intersection intersect)
+        private Vector3 Refract(Ray ray, Intersection intersect, short depht, bool drawDebugline)
         {
-            float c1 = Vector3.Dot(intersect.normal, ray.direction);
-            float c2 = (float)Math.Sqrt(1 - (intersect.primitive.material.e * intersect.primitive.material.e) * (1 - (c1 * c1)));
-            Ray refractRay = new Ray()
+            float nDotD = Vector3.Dot(intersect.normal, ray.direction);
+            float e = intersect.primitive.material.e;
+
+            if (nDotD < 0)
             {
-                direction = (intersect.primitive.material.e * ray.direction) 
-                    + ((intersect.primitive.material.e * (c1 - c2)) * intersect.normal),
-                origin = intersect.intersectionPoint,
-                t = float.MaxValue
-            };
-            refractRay.origin += 0.001f * refractRay.direction;
-            return refractRay;
+                nDotD = -nDotD; // we are outside the surface, we want cos(theta) to be positive
+            }
+            else
+            {
+                intersect.InvertNormal(); // we are inside the surface, cos(theta) is already positive but reverse normal direction 
+                e = intersect.primitive.material.refractionIndex;
+            }
+
+            float c = 1 - e * e * (1 - nDotD * nDotD);
+
+            if (c < 0) return new Vector3(0, 0, 0);
+
+            Ray refractRay = new Ray(intersect.intersectionPoint,
+                (e * ray.direction) + ((e * (nDotD - (float)Math.Sqrt(c)) * intersect.normal)));
+
+            refractRay.origin += 0.001f * refractRay.direction;  // offset by a small margin
+            return Trace(refractRay, depht, drawDebugline);
         }
 
-        private Ray Reflect(Ray ray, Intersection intersect)
+        private Vector3 Reflect(Ray ray, Intersection intersect, short depth, bool drawDebugLine)
         {
             Ray mirrorRay = new Ray()
             {
@@ -152,8 +172,8 @@ namespace RayTracer
                 t = float.MaxValue
             };
 
-            mirrorRay.origin += 0.01f * mirrorRay.direction; // offset by a small margin
-            return mirrorRay;
+            mirrorRay.origin += 0.001f * mirrorRay.direction; // offset by a small margin
+            return Trace(mirrorRay, depth, drawDebugLine);
         }
 
         // Clamp integer to minimum 0 and max 255

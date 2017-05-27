@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace RayTracer
 {
@@ -27,6 +28,11 @@ namespace RayTracer
         public Material GetMaterial()
         {
             return this.primitive.material;
+        }
+
+        internal void InvertNormal()
+        {
+            normal = -normal;
         }
     }
 }
