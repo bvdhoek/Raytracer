@@ -22,6 +22,7 @@ namespace RayTracer
         public float refractionIndex = 1.5f; // glass
 
         public float e; // 1 over refraction index
+        private bool isCheckered;
 
         public Material()
         {
@@ -31,7 +32,7 @@ namespace RayTracer
 
         internal void SetColor(Vector3 color, float reflectiveness = 0, float transparency = 0, float shine = 0)
         {
-            if(reflectiveness + transparency + shine > 1)
+            if((reflectiveness + transparency + shine) >= 1.01)
             {
                 throw new Exception("Material components total cannot exceed 1!");
             }

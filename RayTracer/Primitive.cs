@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace RayTracer
 {
@@ -27,6 +28,11 @@ namespace RayTracer
         public bool IsMirror()
         {
             return material.isMirror;
+        }
+
+        internal virtual Vector3 GetColor(Vector3 intersectionPoint)
+        {
+            return this.material.color;
         }
     }
 }

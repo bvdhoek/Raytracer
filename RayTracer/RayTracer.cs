@@ -114,10 +114,18 @@ namespace RayTracer
             }
             if (material.isDielectic)
             {
+                float nDotD = Vector3.Dot(intersect.normal, ray.direction);
+                float e = intersect.primitive.material.e;
+
+                if (nDotD < 0)
+                {
+                    nDotD = -nDotD; // we are outside the surface, we want cos(theta) to be positive
+                }
+
                 // Calculate some neccessary variables:
                 float r0Root = (1 - material.refractionIndex) / (1 + material.refractionIndex);
                 float r0 = r0Root * r0Root; // r0
-                float oneMinusCos = 1 - Vector3.Dot(intersect.normal, ray.direction); // (1 - cos alpha)
+                float oneMinusCos = 1 - nDotD; // (1 - cos alpha)
 
                 // Calculate how much light is reflected:
                 float reflection = r0 + (1 - r0) * oneMinusCos * oneMinusCos * oneMinusCos * oneMinusCos * oneMinusCos;
@@ -133,7 +141,9 @@ namespace RayTracer
                 // Calculate reflection of shiny object
             }
 
-            color += intersect.primitive.material.diffuseness * scene.DirectIllumination(intersect) * intersect.primitive.material.color;
+            color += intersect.primitive.material.diffuseness 
+                * scene.DirectIllumination(intersect) 
+                * intersect.primitive.GetColor(intersect.intersectionPoint);
             return color;
         }
 
