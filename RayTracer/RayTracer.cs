@@ -16,8 +16,6 @@ namespace RayTracer
     {
         Bitmap image3D = new Bitmap(512, 512);
 
-        Debugger debugger = new Debugger();
-
         public Camera camera = new Camera();
         public Scene scene = new Scene();
 
@@ -27,7 +25,7 @@ namespace RayTracer
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
         {
-            debugger.SetupDebugView(camera, scene);
+            Debugger.SetupDebugView(camera, scene);
 
             // 3D image
             Rectangle rect = new Rectangle(0, 0, 512, 512);
@@ -65,7 +63,7 @@ namespace RayTracer
             Bitmap combined = new Bitmap(1024, 512);
             Graphics combinedGraphics = Graphics.FromImage(combined);
             combinedGraphics.DrawImage(image3D, 0, 0);
-            combinedGraphics.DrawImage(debugger.image2D, 512, 0);
+            combinedGraphics.DrawImage(Debugger.image2D, 512, 0);
 
             return combined;
         }
@@ -88,9 +86,9 @@ namespace RayTracer
             if (drawDebugLine)
             {
                 if (intersect == null)
-                    debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.origin.X + ray.direction.X * 100, ray.origin.Z + ray.direction.Z * 100, true);
+                    Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.origin.X + ray.direction.X * 100, ray.origin.Z + ray.direction.Z * 100, Color.Red);
                 else
-                    debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, intersect.intersectionPoint.X, intersect.intersectionPoint.Z, false);
+                    Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, intersect.intersectionPoint.X, intersect.intersectionPoint.Z, Color.Green);
             }
 
             if (intersect == null)
@@ -142,7 +140,7 @@ namespace RayTracer
             }
 
             color += intersect.primitive.material.diffuseness 
-                * scene.DirectIllumination(intersect) 
+                * scene.DirectIllumination(intersect, drawDebugLine) 
                 * intersect.primitive.GetColor(intersect.intersectionPoint);
             return color;
         }

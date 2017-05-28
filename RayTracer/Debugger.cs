@@ -8,24 +8,24 @@ using System.Threading.Tasks;
 
 namespace RayTracer
 {
-    class Debugger
+    public static class Debugger
     {
-        public Bitmap image2D = new Bitmap(512, 512);
+        public static Bitmap image2D = new Bitmap(512, 512);
 
-        float scale;
-        Graphics graphics2D;
+        static float scale;
+        static Graphics graphics2D;
 
-        // Draw a debug ray. If it intersected, make it red. Otherwise, make it yellow.
-        public void DrawDebugLine(float x1, float z1, float x2, float z2, bool intersect)
+        // Draw a debug ray
+        public static void DrawDebugLine(float x1, float z1, float x2, float z2, Color color)
         {
-            graphics2D.DrawLine(intersect ? new Pen(Color.Red) : new Pen(Color.Yellow),
+            graphics2D.DrawLine(new Pen(color),
                 x1 * scale + image2D.Width / 2,
                 image2D.Height - z1 * scale,
                 x2 * scale + image2D.Width / 2,
                 image2D.Height - z2 * scale);
         }
 
-        internal void SetupDebugView(Camera camera, Scene scene)
+        internal static void SetupDebugView(Camera camera, Scene scene)
         {
 
             graphics2D = Graphics.FromImage(image2D);
@@ -35,7 +35,7 @@ namespace RayTracer
 
         }
         // Draw a white line in de debugview representing the screen.
-        private void DrawDebugScreen(Camera camera)
+        private static void DrawDebugScreen(Camera camera)
         {
             Vector3 p0 = camera.p0;
             Vector3 p1 = camera.p1;
@@ -49,7 +49,7 @@ namespace RayTracer
         }
 
         // Determine furthest object from the camera for scale of the debugview
-        private void SetDebugScale(Camera camera, Scene scene)
+        private static void SetDebugScale(Camera camera, Scene scene)
         {
             float maxX = 0f;
             float maxZ = 0f;
@@ -73,7 +73,7 @@ namespace RayTracer
             scale = image2D.Width / max;
         }
 
-        private void DrawDebugPrimitives(Scene scene)
+        private static void DrawDebugPrimitives(Scene scene)
         {
             foreach (Primitive primitive in scene.primitives)
             {
