@@ -14,7 +14,9 @@ namespace RayTracer
 {
     public class RayTracer
     {
-        Bitmap image3D = new Bitmap(512, 512);
+        static int screenSize = 512;
+        static int scaledSize = screenSize * 2;
+        Bitmap image3D = new Bitmap(scaledSize, scaledSize);
 
         Debugger debugger = new Debugger();
 
@@ -27,7 +29,7 @@ namespace RayTracer
             debugger.SetupDebugView(camera, scene);
 
             // 3D image
-            Rectangle rect = new Rectangle(0, 0, 512, 512);
+            Rectangle rect = new Rectangle(0, 0, scaledSize, scaledSize);
             // lock the bits
             BitmapData bitmapData =
                 image3D.LockBits(rect, ImageLockMode.WriteOnly,
@@ -36,16 +38,16 @@ namespace RayTracer
             // Get the address of the first line.
             uint* ptr = (uint*)bitmapData.Scan0;
 
-            for (int i = 0; i < 512; i++)
+            for (int i = 0; i < scaledSize; i++)
             {
                 uint* line = ptr;
 
-                for (int j = 0; j < 512; j++)
+                for (int j = 0; j < scaledSize; j++)
                 {
-                    float x = ((float)j) / 512;
-                    float y = ((float)i) / 512;
+                    float x = ((float)j) / scaledSize;
+                    float y = ((float)i) / scaledSize;
                     Ray ray = camera.MakeRay(x, y);
-                    Vector3 color = Trace(ray, i == 256 && j % 16 ==0);
+                    Vector3 color = Trace(ray, i == scaledSize / 2 && j % 16 ==0);
                     *line++ = (uint) Color.FromArgb(
                                         Clamp((int)(color.X * 255)),
                                         Clamp((int)(color.Y * 255)),
@@ -58,10 +60,11 @@ namespace RayTracer
 
             // Unlock the bits.
             image3D.UnlockBits(bitmapData);
+            Bitmap scaledImage = new Bitmap(image3D, new Size(screenSize, screenSize));
 
             Bitmap combined = new Bitmap(1024, 512);
             Graphics combinedGraphics = Graphics.FromImage(combined);
-            combinedGraphics.DrawImage(image3D, 0, 0);
+            combinedGraphics.DrawImage(scaledImage, 0, 0);
             combinedGraphics.DrawImage(debugger.image2D, 512, 0);
 
             return combined;

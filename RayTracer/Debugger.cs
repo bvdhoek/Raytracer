@@ -27,7 +27,7 @@ namespace RayTracer
 
         internal void SetupDebugView(Camera camera, Scene scene)
         {
-
+            image2D = new Bitmap(512, 512);
             graphics2D = Graphics.FromImage(image2D);
             SetDebugScale(camera, scene);
             DrawDebugPrimitives(scene);
