@@ -14,6 +14,7 @@ namespace RayTracer
 {
     public class RayTracer
     {
+        static int screenSize = 512;
         Bitmap image3D = new Bitmap(512, 512);
 
         public Camera camera = new Camera();
@@ -21,6 +22,9 @@ namespace RayTracer
 
         // maximum recursion depth
         short maxDepth = 4;
+
+        // How many rays are cast per pixel; implementation of anti-aliasing.
+        private int raysPerPixel = 10;
 
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
@@ -34,8 +38,12 @@ namespace RayTracer
                 image3D.LockBits(rect, ImageLockMode.WriteOnly,
                 PixelFormat.Format32bppPArgb);
 
+            Random r = new Random();
             // Get the address of the first line.
             uint* ptr = (uint*)bitmapData.Scan0;
+
+            // Divide by 265 in stead of 512 to make it a little bit noisy; it looks better.
+            float pixelFraction = ((float)1/265) / raysPerPixel;
 
             for (int i = 0; i < 512; i++)
             {
@@ -43,15 +51,19 @@ namespace RayTracer
 
                 for (int j = 0; j < 512; j++)
                 {
-                    float x = ((float)j) / 512;
-                    float y = ((float)i) / 512;
-                    Ray ray = camera.MakeRay(x, y);
-                    Vector3 color = Trace(ray, 0, i == 256 && j % 32 == 0);
+                    Vector3 color = new Vector3(0, 0, 0);
+                    for (int k = 0; k < raysPerPixel; k++)
+                    {
+                        float x = ((float)j) / 512 + ((float)r.Next(0, raysPerPixel) * pixelFraction);
+                        float y = ((float)i) / 512 + ((float)r.Next(0, raysPerPixel) * pixelFraction);
+                        Ray ray = camera.MakeRay(x, y);
+                        color += Trace(ray, i == 265 && j % 16 == 0 && k == 0) / raysPerPixel;
+                    }
                     *line++ = (uint)Color.FromArgb(
-                                        Clamp((int)(color.X * 255)),
-                                        Clamp((int)(color.Y * 255)),
-                                        Clamp((int)(color.Z * 255))
-                                     ).ToArgb();
+                                            Clamp((int)(color.X * 255)),
+                                            Clamp((int)(color.Y * 255)),
+                                            Clamp((int)(color.Z * 255))
+                                         ).ToArgb();
                 }
                 // Set pointer to next line
                 ptr += bitmapData.Stride / 4;
@@ -59,6 +71,7 @@ namespace RayTracer
 
             // Unlock the bits.
             image3D.UnlockBits(bitmapData);
+            Bitmap scaledImage = new Bitmap(image3D, new Size(screenSize, screenSize));
 
             Bitmap combined = new Bitmap(1024, 512);
             Graphics combinedGraphics = Graphics.FromImage(combined);
