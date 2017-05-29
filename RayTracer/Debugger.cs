@@ -27,12 +27,12 @@ namespace RayTracer
 
         internal static void SetupDebugView(Camera camera, Scene scene)
         {
-
             graphics2D = Graphics.FromImage(image2D);
+            graphics2D.FillRectangle(Brushes.Black, 0, 0, image2D.Width, image2D.Height);
+
             SetDebugScale(camera, scene);
             DrawDebugPrimitives(scene);
             DrawDebugScreen(camera);
-
         }
         // Draw a white line in de debugview representing the screen.
         private static void DrawDebugScreen(Camera camera)
