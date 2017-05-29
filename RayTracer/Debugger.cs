@@ -13,7 +13,7 @@ namespace RayTracer
         public static Bitmap image2D = new Bitmap(512, 512);
 
         static float scale;
-        static Graphics graphics2D;
+        static Graphics graphics2D = Graphics.FromImage(image2D);
 
         // Draw a debug ray
         public static void DrawDebugLine(float x1, float z1, float x2, float z2, Color color)
@@ -25,14 +25,16 @@ namespace RayTracer
                 image2D.Height - z2 * scale);
         }
 
+        public static void Reset()
+        {
+            graphics2D.Clear(Color.Black);
+        }
+
         internal static void SetupDebugView(Camera camera, Scene scene)
         {
-
-            graphics2D = Graphics.FromImage(image2D);
             SetDebugScale(camera, scene);
             DrawDebugPrimitives(scene);
             DrawDebugScreen(camera);
-
         }
         // Draw a white line in de debugview representing the screen.
         private static void DrawDebugScreen(Camera camera)
@@ -40,7 +42,6 @@ namespace RayTracer
             Vector3 p0 = camera.p0;
             Vector3 p1 = camera.p1;
             float widthOffset = image2D.Width / 2 - p1.X - p0.X;
-
             graphics2D.DrawLine(new Pen(Color.White),
                 p0.X * scale + widthOffset,
                 image2D.Height - p0.Z * scale,
@@ -75,6 +76,7 @@ namespace RayTracer
 
         private static void DrawDebugPrimitives(Scene scene)
         {
+            graphics2D.Clear(Color.Black);
             foreach (Primitive primitive in scene.primitives)
             {
                 // Draw a nice ellipse for each sphere

@@ -24,7 +24,7 @@ namespace RayTracer {
             spherePos.X += 4;
             this.primitives[2] = new Sphere(spherePos, 0.5f, new Vector3(0, 0, 1));
 
-            primitives[3] = new Plane(new Vector3(0, 1, 0), new Vector3(0, -1, 0), new Vector3(0, 1, 1));
+            primitives[3] = new Plane(new Vector3(0, 1, 0), new Vector3(0, -2, 0), new Vector3(0, 1, 1));
         }
 
         // Find intersection of the ray with nearest object in the scene.

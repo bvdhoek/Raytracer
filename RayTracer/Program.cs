@@ -27,48 +27,47 @@ namespace RayTracer
         {
             Rectangle screenRectangle = RectangleToScreen(this.ClientRectangle);
             this.rayTracer = rayTracer;
-            this.Width = 1024;
-            this.Height = 512 + screenRectangle.Top - this.Top;
-            this.SetStyle(ControlStyles.DoubleBuffer |
+            Width = 1024;
+            Height = 512 + screenRectangle.Top - this.Top;
+            SetStyle(ControlStyles.DoubleBuffer |
                           ControlStyles.UserPaint |
                           ControlStyles.AllPaintingInWmPaint,
                           true);
-            this.UpdateStyles();
+            UpdateStyles();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
-            if (e.KeyCode == Keys.Q)
+            switch (e.KeyCode)
             {
-                rayTracer.camera.Zoom(1.1f);
-                Invalidate();
+                case Keys.Z:
+                    rayTracer.camera.Zoom(1.1f);
+                    break;
+                case Keys.X:
+                    rayTracer.camera.Zoom(0.9f);
+                    break;
+                case Keys.W:
+                    rayTracer.camera.MoveForward();
+                    break;
+                case Keys.A:
+                    rayTracer.camera.MoveLeft();
+                    break;
+                case Keys.S:
+                    rayTracer.camera.MoveBack();
+                    break;
+                case Keys.D:
+                    rayTracer.camera.MoveRight();
+                    break;
+                case Keys.Q:
+                    rayTracer.camera.MoveDown();
+                    break;
+                case Keys.E:
+                    rayTracer.camera.MoveUp();
+                    Debugger.Reset();
+                    break;
             }
-            else if (e.KeyCode == Keys.W)
-            {
-                rayTracer.camera.Zoom(0.9f);
-                Invalidate();
-            }
-            else if (e.KeyCode == Keys.Left)
-            {
-                rayTracer.camera.MoveX(-0.1f);
-                Invalidate();
-            }
-            else if (e.KeyCode == Keys.Right)
-            {
-                rayTracer.camera.MoveX(0.1f);
-                Invalidate();
-            }
-            else if (e.KeyCode == Keys.Up)
-            {
-                rayTracer.camera.MoveY(0.1f);
-                Invalidate();
-            }
-            else if (e.KeyCode == Keys.Down)
-            {
-                rayTracer.camera.MoveY(-0.1f);
-                Invalidate();
-            }
+            Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e)

@@ -9,20 +9,29 @@ namespace RayTracer
 
         // Camera direction
         public Vector3 d = new Vector3(0, 0, 1);
+        public float distanceToScreen = 2;
 
-        Vector3 screenCenter;
+        Vector3 screenCenter, up, right;
 
         // Screen corners:
         public Vector3 p0, p1, p2;
 
         public Camera()
         {
+            up = new Vector3(0, 1, 0);
+            setDirections();
             setScreen();
+        }
+
+        private void setDirections()
+        {
+            right = Vector3.Cross(up, d);
+            up = Vector3.Cross(right, d);
         }
 
         private void setScreen()
         {
-            this.screenCenter = pos + 2 * d;
+            screenCenter = pos + distanceToScreen * d;
             p0 = screenCenter + new Vector3(-1, 1, 0);
             p1 = screenCenter + new Vector3(1, 1, 0);
             p2 = screenCenter + new Vector3(-1, -1, 0);
@@ -30,20 +39,65 @@ namespace RayTracer
 
         public void Zoom(float scalar)
         {
-            d *= scalar;
+            distanceToScreen *= scalar;
+            setScreen();
+            Debugger.Reset();
+        }
+
+        public void MoveRight()
+        {
+            pos += 0.1f * right;
             setScreen();
         }
 
-        public void MoveX(float distance)
+        public void MoveLeft()
         {
-            pos.X += distance;
+            pos -= 0.1f * right;
             setScreen();
         }
 
-        public void MoveY(float distance)
+        public void MoveUp()
         {
-            pos.Y += distance;
+            pos += 0.1f * up;
             setScreen();
+        }
+
+        public void MoveDown()
+        {
+            pos -= 0.1f * up;
+            setScreen();
+        }
+
+        public void MoveForward()
+        {
+            pos += 0.1f * d;
+            setScreen();
+        }
+
+        public void MoveBack()
+        {
+            pos -= 0.1f * d;
+            setScreen();
+        }
+
+        public void TurnRight(float degrees)
+        {
+
+        }
+
+        public void TurnLeft(float degrees)
+        {
+
+        }
+
+        public void TurnUp(float degrees)
+        {
+
+        }
+
+        public void TurnDown(float degrees)
+        {
+
         }
 
         // Make a new ray from relative screen coördinates. 0 <= x, y <= 1
