@@ -18,11 +18,13 @@ namespace RayTracer
         // Draw a debug ray
         public static void DrawDebugLine(float x1, float z1, float x2, float z2, Color color)
         {
+            float a = Helpers.ClampToMinimumDesktopCoordinate(x1 * scale + image2D.Width / 2);
+            float b = Helpers.ClampToMinimumDesktopCoordinate(image2D.Height - z1 * scale);
+            float c = Helpers.ClampToMinimumDesktopCoordinate(x2 * scale + image2D.Width / 2);
+            float d = Helpers.ClampToMinimumDesktopCoordinate(image2D.Height - z2 * scale);
+
             graphics2D.DrawLine(new Pen(color),
-                x1 * scale + image2D.Width / 2,
-                image2D.Height - z1 * scale,
-                x2 * scale + image2D.Width / 2,
-                image2D.Height - z2 * scale);
+                a, b, c, d);
         }
 
         public static void Reset()
