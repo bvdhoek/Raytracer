@@ -15,13 +15,15 @@ namespace RayTracer
     public class RayTracer
     {
         static int screenSize = 512;
-        static int scaledSize = screenSize * 2;
-        Bitmap image3D = new Bitmap(scaledSize, scaledSize);
+        Bitmap image3D = new Bitmap(512, 512);
 
         Debugger debugger = new Debugger();
 
         public Camera camera = new Camera();
         public Scene scene = new Scene();
+
+        // How many rays are cast per pixel; implementation of anti-aliasing.
+        private int raysPerPixel = 10;
 
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
@@ -29,30 +31,38 @@ namespace RayTracer
             debugger.SetupDebugView(camera, scene);
 
             // 3D image
-            Rectangle rect = new Rectangle(0, 0, scaledSize, scaledSize);
+            Rectangle rect = new Rectangle(0, 0, 512, 512);
             // lock the bits
             BitmapData bitmapData =
                 image3D.LockBits(rect, ImageLockMode.WriteOnly,
                 PixelFormat.Format32bppPArgb);
 
+            Random r = new Random();
             // Get the address of the first line.
             uint* ptr = (uint*)bitmapData.Scan0;
 
-            for (int i = 0; i < scaledSize; i++)
+            // Divide by 265 in stead of 512 to make it a little bit noisy; it looks better.
+            float pixelFraction = ((float)1/265) / raysPerPixel;
+
+            for (int i = 0; i < 512; i++)
             {
                 uint* line = ptr;
 
-                for (int j = 0; j < scaledSize; j++)
+                for (int j = 0; j < 512; j++)
                 {
-                    float x = ((float)j) / scaledSize;
-                    float y = ((float)i) / scaledSize;
-                    Ray ray = camera.MakeRay(x, y);
-                    Vector3 color = Trace(ray, i == scaledSize / 2 && j % 16 ==0);
-                    *line++ = (uint) Color.FromArgb(
-                                        Clamp((int)(color.X * 255)),
-                                        Clamp((int)(color.Y * 255)),
-                                        Clamp((int)(color.Z * 255))
-                                     ).ToArgb();
+                    Vector3 color = new Vector3(0, 0, 0);
+                    for (int k = 0; k < raysPerPixel; k++)
+                    {
+                        float x = ((float)j) / 512 + ((float)r.Next(0, raysPerPixel) * pixelFraction);
+                        float y = ((float)i) / 512 + ((float)r.Next(0, raysPerPixel) * pixelFraction);
+                        Ray ray = camera.MakeRay(x, y);
+                        color += Trace(ray, i == 265 && j % 16 == 0 && k == 0) / raysPerPixel;
+                    }
+                    *line++ = (uint)Color.FromArgb(
+                                            Clamp((int)(color.X * 255)),
+                                            Clamp((int)(color.Y * 255)),
+                                            Clamp((int)(color.Z * 255))
+                                         ).ToArgb();
                 }
                 // Set pointer to next line
                 ptr += bitmapData.Stride / 4;
