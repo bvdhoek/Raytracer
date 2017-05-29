@@ -36,10 +36,8 @@ namespace RayTracer
                 return null;
             }
 
-            bool insideSphere = false;
             if (c.Length() < r)
             {
-                insideSphere = true;
                 // origin is inside the sphere
                 t += (float)Math.Sqrt(r * r - q2);
             }

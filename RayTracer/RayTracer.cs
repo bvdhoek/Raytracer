@@ -24,7 +24,7 @@ namespace RayTracer
         short maxDepth = 4;
 
         // How many rays are cast per pixel; implementation of anti-aliasing.
-        private int raysPerPixel = 10;
+        private int raysPerPixel = 5;
 
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
@@ -43,7 +43,7 @@ namespace RayTracer
             uint* ptr = (uint*)bitmapData.Scan0;
 
             // Divide by 265 in stead of 512 to make it a little bit noisy; it looks better.
-            float pixelFraction = ((float)1/265) / raysPerPixel;
+            float pixelFraction = ((float)1 / 265) / raysPerPixel;
 
             for (int i = 0; i < 512; i++)
             {
@@ -57,7 +57,7 @@ namespace RayTracer
                         float x = ((float)j) / 512 + ((float)r.Next(0, raysPerPixel) * pixelFraction);
                         float y = ((float)i) / 512 + ((float)r.Next(0, raysPerPixel) * pixelFraction);
                         Ray ray = camera.MakeRay(x, y);
-                        color += Trace(ray, i == 265 && j % 16 == 0 && k == 0) / raysPerPixel;
+                        color += Trace(ray, 0, i == 265 && j % 16 == 0 && k == 0) / raysPerPixel;
                     }
                     *line++ = (uint)Color.FromArgb(
                                             Clamp((int)(color.X * 255)),
@@ -82,7 +82,7 @@ namespace RayTracer
         }
 
         // This is where the magic happens! Trace a ray...
-        Vector3 Trace(Ray ray, short depth, bool drawDebugLine)
+        Vector3 Trace(Ray ray, short depth, bool drawDebugLine, bool absorb = false)
         {
             // Background color. This will be the color of the skydome once that's implemented
             Vector3 backgroundColor = new Vector3(0, 0, 0);
@@ -96,7 +96,7 @@ namespace RayTracer
             Intersection intersect = scene.Intersect(ray);
 
             // Draw some debug output.
-            if (drawDebugLine)
+            if (drawDebugLine && depth > 0)
             {
                 if (intersect == null)
                     Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.origin.X + ray.direction.X * 100, ray.origin.Z + ray.direction.Z * 100, Color.Red);
@@ -110,7 +110,14 @@ namespace RayTracer
             }
 
             // Magic!
-            return DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);         
+            if (absorb && intersect.GetMaterial().absorbtion.Length() > 0)
+            {
+                return intersect.dist
+                * -intersect.GetMaterial().absorbtion
+                + DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
+            }
+            else
+                return DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
         }
 
         // Do we have to pass all these ugly arguments? ='( 
@@ -152,8 +159,8 @@ namespace RayTracer
                 // Calculate reflection of shiny object
             }
 
-            color += intersect.primitive.material.diffuseness 
-                * scene.DirectIllumination(intersect, drawDebugLine) 
+            color += intersect.primitive.material.diffuseness
+                * scene.DirectIllumination(intersect, drawDebugLine)
                 * intersect.primitive.GetColor(intersect.intersectionPoint);
             return color;
         }
@@ -163,9 +170,11 @@ namespace RayTracer
             float nDotD = Vector3.Dot(intersect.normal, ray.direction);
             float e = intersect.primitive.material.e;
 
+            bool absorb = false;
             if (nDotD < 0)
             {
                 nDotD = -nDotD; // we are outside the surface, we want cos(theta) to be positive
+                absorb = true;
             }
             else
             {
@@ -181,7 +190,8 @@ namespace RayTracer
                 (e * ray.direction) + ((e * (nDotD - (float)Math.Sqrt(c)) * intersect.normal)));
 
             refractRay.origin += 0.001f * refractRay.direction;  // offset by a small margin
-            return Trace(refractRay, depht, drawDebugline);
+
+            return Trace(refractRay, depht, drawDebugline, absorb);
         }
 
         private Vector3 Reflect(Ray ray, Intersection intersect, short depth, bool drawDebugLine)
