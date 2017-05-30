@@ -48,22 +48,22 @@ namespace RayTracer
                     rayTracer.camera.Zoom(0.9f);
                     break;
                 case Keys.W:
-                    rayTracer.camera.MoveForward();
+                    rayTracer.camera.Move(0.1f, rayTracer.camera.d);
                     break;
                 case Keys.A:
-                    rayTracer.camera.MoveLeft();
+                    rayTracer.camera.Move(-0.1f, rayTracer.camera.right);
                     break;
                 case Keys.S:
-                    rayTracer.camera.MoveBack();
+                    rayTracer.camera.Move(-0.1f, rayTracer.camera.d);
                     break;
                 case Keys.D:
-                    rayTracer.camera.MoveRight();
+                    rayTracer.camera.Move(0.1f, rayTracer.camera.right);
                     break;
                 case Keys.Q:
-                    rayTracer.camera.MoveDown();
+                    rayTracer.camera.Move(-0.1f, rayTracer.camera.up);
                     break;
                 case Keys.E:
-                    rayTracer.camera.MoveUp();
+                    rayTracer.camera.Move(0.1f, rayTracer.camera.up);
                     break;
                 case Keys.Right:
                     rayTracer.camera.RotateRight(2);
