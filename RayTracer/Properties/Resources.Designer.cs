@@ -63,29 +63,9 @@ namespace RayTracer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap grace_probe {
-            get {
-                object obj = ResourceManager.GetObject("grace_probe", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap uffizi {
             get {
                 object obj = ResourceManager.GetObject("uffizi", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap uffizi_probe {
-            get {
-                object obj = ResourceManager.GetObject("uffizi_probe", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
