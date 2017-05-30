@@ -48,3 +48,10 @@ Stackoverflow (of course).
 [Stanford University](https://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf)
 [Paul de Bevec](http://www.pauldebevec.com/Probes/)
 
+=======
+## Camera controls
+### Movements
+Use a, s, w and d to move around the camera
+
+### Rotation
+Use the arrows and 'm' and 'n' to rotate the camera
