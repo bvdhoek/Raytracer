@@ -5,9 +5,9 @@ namespace RayTracer
     class Light
     {
         // default position
-        public Vector3 pos = new Vector3(0, 10, 0);
+        public Vector3 pos = new Vector3(0, 4, 0);
         // default color
-        public Vector3 color = new Vector3(120, 120, 120);
+        public Vector3 color = new Vector3(40, 40, 40);
 
         public Light() { }
 

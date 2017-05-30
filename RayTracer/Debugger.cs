@@ -82,9 +82,9 @@ namespace RayTracer
                 {
                     Sphere sphere = (Sphere)primitive;
                     Color color = Color.FromArgb(
-                        (int)primitive.material.color.X * 255,
-                        (int)primitive.material.color.Y * 255,
-                        (int)primitive.material.color.Z * 255
+                        (int)(primitive.material.color.X * 255),
+                        (int)(primitive.material.color.Y * 255),
+                        (int)(primitive.material.color.Z * 255)
                         );
 
                     graphics2D.DrawEllipse(new Pen(color),

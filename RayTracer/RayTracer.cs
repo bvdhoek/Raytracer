@@ -21,10 +21,10 @@ namespace RayTracer
         public Scene scene = new Scene();
 
         // maximum recursion depth
-        short maxDepth = 4;
+        short maxDepth = 5;
 
         // How many rays are cast per pixel; implementation of anti-aliasing.
-        private int raysPerPixel = 2;
+        private int raysPerPixel = 3;
 
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
@@ -127,7 +127,7 @@ namespace RayTracer
             Material material = intersect.GetMaterial();
             if (material.isMirror)
             {
-                color += material.reflectiveness * Reflect(ray, intersect, depth, drawDebugLine);
+                color = material.reflectiveness * Reflect(ray, intersect, depth, drawDebugLine);
             }
             if (material.isDielectic)
             {
@@ -175,27 +175,28 @@ namespace RayTracer
 
         private Vector3 Refract(Ray ray, Intersection intersect, short depht, bool drawDebugline)
         {
-            float nDotD = Vector3.Dot(intersect.normal, ray.direction);
-            bool absorb = false;
+            float nDotD = -Vector3.Dot(intersect.normal, ray.direction);
             float eta1 = 1, eta2 = intersect.GetMaterial().refractionIndex;
+
+            bool absorb = true;
             if (nDotD < 0)
             {
-                nDotD = -nDotD; // we are outside the surface, we want cos(theta) to be positive
-                absorb = true;
-            }
-            else
-            {
+                // we are inside the surface, cos(theta) is already positive but reverse normal direction 
                 eta1 = eta2; eta2 = 1;
-                intersect.InvertNormal(); // we are inside the surface, cos(theta) is already positive but reverse normal direction 
+                intersect.InvertNormal();
+                absorb = false;
             }
 
-            float e = eta1 / eta2;
-            float c = 1 - e * e * (1 - nDotD * nDotD);
+            nDotD = -Vector3.Dot(intersect.normal, ray.direction);
+            float eta = eta1 / eta2;
+            float c = eta * eta * (1 - nDotD * nDotD);
 
-            if (c < 0) return new Vector3(0, 0, 0);
+            if (c > 1) return new Vector3(0, 0, 0); // Total internal reflection
+
+            float cosT = (float)Math.Sqrt(1 - c);
 
             Ray refractRay = new Ray(intersect.intersectionPoint,
-                (e * ray.direction) + ((e * (nDotD - (float)Math.Sqrt(c)) * intersect.normal)));
+                eta * ray.direction + (eta * nDotD - cosT) * intersect.normal);
 
             refractRay.origin += 0.001f * refractRay.direction;  // offset by a small margin
 
