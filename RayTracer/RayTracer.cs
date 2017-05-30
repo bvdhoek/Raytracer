@@ -42,8 +42,7 @@ namespace RayTracer
             // Get the address of the first line.
             uint* ptr = (uint*)bitmapData.Scan0;
 
-            // Divide by 265 in stead of 512 to make it a little bit noisy; it looks better.
-            float pixelFraction = ((float)1 / 265) / raysPerPixel;
+            float pixelFraction = ((float)1 / 512) / raysPerPixel;
 
             for (int i = 0; i < 512; i++)
             {
@@ -114,7 +113,7 @@ namespace RayTracer
             {
                 return intersect.dist
                 * -intersect.GetMaterial().absorbtion
-                + DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
+                +  DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
             }
             else
                 return DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
