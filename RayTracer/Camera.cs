@@ -78,42 +78,42 @@ namespace RayTracer
         // rotation methods assume degrees < 90
         public void RotateRight(float degrees)
         {
-            d = Vector3.Normalize(d + ((float) Math.Tan(degrees / 180 * Math.PI)) * right - pos);
+            d = Vector3.Normalize(d + ((float) Math.Tan(degrees / 180 * Math.PI)) * right);
             right = Vector3.Cross(up, d);
             setScreen();
         }
 
         public void RotateLeft(float degrees)
         {
-            d = Vector3.Normalize(d + ((float)-Math.Tan(degrees / 180 * Math.PI)) * right - pos);
+            d = Vector3.Normalize(d + ((float)-Math.Tan(degrees / 180 * Math.PI)) * right);
             right = Vector3.Cross(up, d);
             setScreen();
         }
 
         public void RotateUp(float degrees)
         {
-            d = Vector3.Normalize(d + ((float)Math.Tan(degrees / 180 * Math.PI)) * up - pos);
+            d = Vector3.Normalize(d + ((float)Math.Tan(degrees / 180 * Math.PI)) * up);
             up = Vector3.Cross(d, right);
             setScreen();
         }
 
         public void RotateDown(float degrees)
         {
-            d = Vector3.Normalize(d + ((float)-Math.Tan(degrees / 180 * Math.PI)) * up - pos);
+            d = Vector3.Normalize(d + ((float)-Math.Tan(degrees / 180 * Math.PI)) * up );
             up = Vector3.Cross(d, right);
             setScreen();
         }
 
         public void TurnRight(float degrees)
         {
-            up = Vector3.Normalize(up + ((float)Math.Tan(degrees / 180 * Math.PI)) * right - pos);
+            up = Vector3.Normalize(up + ((float)Math.Tan(degrees / 180 * Math.PI)) * right);
             right = Vector3.Cross(up, d);
             setScreen();
         }
 
         public void TurnLeft(float degrees)
         {
-            up = Vector3.Normalize(up + ((float)Math.Tan(degrees / 180 * Math.PI)) * -1 * right - pos);
+            up = Vector3.Normalize(up + ((float)Math.Tan(degrees / 180 * Math.PI)) * -1 * right);
             right = Vector3.Cross(up, d);
             setScreen();
         }
