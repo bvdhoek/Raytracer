@@ -23,3 +23,5 @@ E:\Data\Github\Raytracer\RayTracer\bin\Debug\RayTracer.exe
 E:\Data\Github\Raytracer\RayTracer\bin\Debug\RayTracer.pdb
 E:\Data\Github\Raytracer\RayTracer\bin\Debug\System.Numerics.Vectors.dll
 E:\Data\Github\Raytracer\RayTracer\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\wzwie\OneDrive\Documents\GitHub\Raytracer\RayTracer\obj\Debug\RayTracer.Properties.Resources.resources
+C:\Users\wzwie\OneDrive\Documents\GitHub\Raytracer\RayTracer\obj\Debug\RayTracer.csproj.GenerateResource.Cache

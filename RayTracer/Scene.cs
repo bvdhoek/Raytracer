@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Numerics;
 
 namespace RayTracer {
@@ -12,6 +13,14 @@ namespace RayTracer {
         // Create new scene and populate with some default lights and primitives.
         public Scene()
         {
+            byte[] sky = Properties.Resources.uffizi;
+            float[] skyF = new float[sky.Length / 4];
+            for(int i = 0; i < skyF.Length; i++)
+            {
+                byte[] array = { sky[i * 4], sky[i * 4 + 1], sky[i * 4 + 2], sky[i * 4 + 3] };
+                skyF[i] = BitConverter.ToSingle(array, 0);
+            }
+
             this.lights[0] = new Light();
 
             Vector3 spherePos = new Vector3(0, 0, 7);
