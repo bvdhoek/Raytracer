@@ -24,7 +24,7 @@ namespace RayTracer
         short maxDepth = 4;
 
         // How many rays are cast per pixel; implementation of anti-aliasing.
-        private int raysPerPixel = 5;
+        private int raysPerPixel = 10;
 
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
@@ -42,7 +42,7 @@ namespace RayTracer
             // Get the address of the first line.
             uint* ptr = (uint*)bitmapData.Scan0;
 
-            float pixelFraction = ((float)1 / 512) / raysPerPixel;
+            float pixelFraction = ((float)1 / 1024) / raysPerPixel;
 
             for (int i = 0; i < 512; i++)
             {
