@@ -1,23 +1,38 @@
 # Raytracer
 
 Bernd van den Hoek - 5895391
+
 Maaike Galama - 5987857
+
 Wilmer Zwietering - 5954312
 
 ### Controls
 Z: Decrease FOV
+
 X: Increase FOV
+
 W: Move forward
+
 A: Move left
+
 S: Move backwards
+
 D: Move right
+
 Q: Move up
+
 E: Move down
+
 Right: Rotate right
+
 Left: Rotate left
+
 Up: Rotate up
+
 Down: Rotate down
+
 M: Roll right
+
 N: Roll left
 
 ### Bonus assignments implemented
@@ -43,7 +58,11 @@ The skydome uses the beautiful palace of Uffizi as image. The image was retrieve
 
 ### Materials used:
 Powerpoint and lecture notes from the amazing UU graphics teachers
+
 Stackoverflow (of course).
+
 [Lighthouse3D](http://www.lighthouse3d.com/tutorials/maths/ray-sphere-intersection/)
+
 [Stanford University](https://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf)
+
 [Paul de Bevec](http://www.pauldebevec.com/Probes/)
