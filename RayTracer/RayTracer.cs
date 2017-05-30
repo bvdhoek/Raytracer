@@ -9,6 +9,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace RayTracer
 {
@@ -26,10 +27,18 @@ namespace RayTracer
         // How many rays are cast per pixel; implementation of anti-aliasing.
         private int raysPerPixel = 2;
 
+        BitmapData skyData;
+        byte[] skyPixels;
+
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
         {
             Debugger.SetupDebugView(camera, scene);
+
+            // Get skybox data
+            skyData = scene.sky.LockBits(new Rectangle(0, 0, scene.sky.Width, scene.sky.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            skyPixels = new byte[scene.sky.Width * scene.sky.Height * 3];
+            Marshal.Copy(skyData.Scan0, skyPixels, 0, skyPixels.Length);
 
             // 3D image
             Rectangle rect = new Rectangle(0, 0, 512, 512);
@@ -71,6 +80,10 @@ namespace RayTracer
             // Unlock the bits.
             image3D.UnlockBits(bitmapData);
             Bitmap scaledImage = new Bitmap(image3D, new Size(screenSize, screenSize));
+
+            // Unlock the skybox
+            Marshal.Copy(skyPixels, 0, skyData.Scan0, skyPixels.Length);
+            scene.sky.UnlockBits(skyData);
 
             Bitmap combined = new Bitmap(1024, 512);
             Graphics combinedGraphics = Graphics.FromImage(combined);
@@ -121,7 +134,7 @@ namespace RayTracer
                 return DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
         }
 
-        private Vector3 GetSkyColor(Ray ray)
+        private unsafe Vector3 GetSkyColor(Ray ray)
         {
             if(ray.direction.X == 0 && ray.direction.Y == 0)
             {
@@ -130,9 +143,10 @@ namespace RayTracer
             float r = (float) ((1.0f / Math.PI) * Math.Acos(ray.direction.Z) / Math.Sqrt(ray.direction.X * ray.direction.X + ray.direction.Y * ray.direction.Y));
             int x = (int)(((ray.direction.X * r + 1) / 2) * scene.sky.Width);
             int y = scene.sky.Height - (int)(((ray.direction.Y * r + 1) / 2) * scene.sky.Height);
-            Color pixel = scene.sky.GetPixel(x, y);
-            Console.WriteLine(pixel);
-            return new Vector3(pixel.R / 255f, pixel.G / 255f, pixel.B / 255f);
+
+            int location = (y * scene.sky.Width + x) * 3;
+
+            return new Vector3(skyPixels[location + 2] / 256f, skyPixels[location + 1] / 256f, skyPixels[location] / 256f);
         }
 
         // Do we have to pass all these ugly arguments? ='( 

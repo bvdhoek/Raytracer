@@ -1,46 +1,40 @@
-﻿using System.Drawing;
+﻿using RayTracer.Properties;
+using System;
+using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Numerics;
-using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace RayTracer {
     //    Scene, which stores a list of primitives and light sources.It implements a scene-level Intersect
     //method, which loops over the primitives and returns the closest intersection
     public class Scene
     {
-        public Primitive[] primitives = new Primitive[0];
+        public Primitive[] primitives = new Primitive[4];
         private Light[] lights = new Light[1];
         public Bitmap sky;
+        public BitmapData bitmapData;
        
         // Create new scene and populate with some default lights and primitives.
         public Scene()
         {
-            Stream imageStreamSource = new FileStream("C:\\Users\\wzwie\\OneDrive\\Documents\\GitHub\\Raytracer\\RayTracer\\Resources\\grace_probe.tif", FileMode.Open, FileAccess.Read, FileShare.Read);
-            TiffBitmapDecoder decoder = new TiffBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-            BitmapSource bitmapSource = decoder.Frames[0];
-            sky = new Bitmap(bitmapSource.PixelWidth, bitmapSource.PixelHeight, PixelFormat.Format48bppRgb);
-            BitmapData bmd = sky.LockBits(new Rectangle(System.Drawing.Point.Empty, sky.Size), ImageLockMode.WriteOnly, PixelFormat.Format48bppRgb);
-            bitmapSource.CopyPixels(Int32Rect.Empty, bmd.Scan0, bmd.Height * bmd.Stride, bmd.Stride);
-            sky.UnlockBits(bmd);
+            sky = Resources.uffizi;
 
-            //this.lights[0] = new Light();
-            //Vector3 spherePos = new Vector3(-2, 0, 7);
-            //this.primitives[0] = new Sphere(spherePos, 1f, new Vector3(1, 0, 0),0 , 0.9f);
-            //this.primitives[0].material.absorbtion = new Vector3(0.01f, 0, 0);
+            this.lights[0] = new Light();
+            Vector3 spherePos = new Vector3(-2, 0, 7);
+            this.primitives[0] = new Sphere(spherePos, 1f, new Vector3(1, 0, 0),0 , 0.9f);
+            this.primitives[0].material.absorbtion = new Vector3(0.01f, 0, 0);
 
-            //spherePos.Z += 2;
-            //spherePos.X += 2;
-            //this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0), 0.1f);
+            spherePos.Z += 2;
+            spherePos.X += 2;
+            this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0), 0.1f);
 
-            //spherePos.X += 3;
-            //this.primitives[2] = new Sphere(spherePos, 0.5f, new Vector3(0, 0, 1), 0.8f);
+            spherePos.X += 3;
+            this.primitives[2] = new Sphere(spherePos, 0.5f, new Vector3(0, 0, 1), 0.8f);
 
-            //primitives[3] = new Plane(new Vector3(0, 1, 0), new Vector3(0, -1, 0), new Vector3(0, 1, 1), 0.5f)
-            //{
-            //    isCheckered = true
-            //};
+            primitives[3] = new Plane(new Vector3(0, 1, 0), new Vector3(0, -1, 0), new Vector3(0, 1, 1), 0.5f)
+            {
+                isCheckered = true
+            };
             //primitives[4] = new Plane(new Vector3(1, 0, 0), new Vector3(-3, 0, 0), new Vector3(0, 1, 1));
             //primitives[5] = new Plane(new Vector3(-1, 0, 0), new Vector3(4, 0, 0), new Vector3(1, 1, 1));
             //primitives[6] = new Plane(new Vector3(0, 0, -1), new Vector3(0, 0, 11), new Vector3(1, 0, 0));

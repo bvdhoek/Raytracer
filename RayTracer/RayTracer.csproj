@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BitMiracle.LibTiff.NET, Version=2.4.583.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BitMiracle.LibTiff.NET.2.4.583\lib\net40\BitMiracle.LibTiff.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -93,6 +97,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\grace_probe.tif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\uffizi_probe1.tif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\uffizi.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\uffizi_probe.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
