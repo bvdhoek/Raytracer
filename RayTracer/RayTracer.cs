@@ -24,7 +24,7 @@ namespace RayTracer
         short maxDepth = 4;
 
         // How many rays are cast per pixel; implementation of anti-aliasing.
-        private int raysPerPixel = 10;
+        private int raysPerPixel = 4;
 
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
@@ -56,7 +56,7 @@ namespace RayTracer
                         float x = ((float)j) / 512 + ((float)r.Next(0, raysPerPixel) * pixelFraction);
                         float y = ((float)i) / 512 + ((float)r.Next(0, raysPerPixel) * pixelFraction);
                         Ray ray = camera.MakeRay(x, y);
-                        color += Trace(ray, 0, i == 265 && j % 16 == 0 && k == 0) / raysPerPixel;
+                        color += Trace(ray, 0, i == 265 && j % 32 == 0 && k == 0) / raysPerPixel;
                     }
                     *line++ = (uint)Color.FromArgb(
                                             Clamp((int)(color.X * 255)),
@@ -95,7 +95,7 @@ namespace RayTracer
             Intersection intersect = scene.Intersect(ray);
 
             // Draw some debug output.
-            if (drawDebugLine && depth > 0)
+            if (drawDebugLine)
             {
                 if (intersect == null)
                     Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.origin.X + ray.direction.X * 100, ray.origin.Z + ray.direction.Z * 100, Color.Red);

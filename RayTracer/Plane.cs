@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Numerics;
 
-namespace RayTracer 
+namespace RayTracer
 {
     class Plane : Primitive
     {
+        public bool isCheckered;
+
         // normal of the plane
         private Vector3 normal;
 
@@ -13,7 +15,18 @@ namespace RayTracer
             this.normal = normal;
         }
 
-        public Plane(Vector3 normal, Vector3 origin, Vector3 color) : base(origin, color, 0.5f)
+        public Plane(Vector3 normal, Vector3 origin, Vector3 color) : base(origin, color)
+        {
+            this.normal = normal;
+        }
+
+        public Plane(Vector3 normal,
+            Vector3 origin,
+            Vector3 color,
+            float reflectiveness = 0,
+            float transparency = 0,
+            float shine = 0
+            ) : base(origin, color, reflectiveness, transparency, shine)
         {
             this.normal = normal;
         }
@@ -25,20 +38,27 @@ namespace RayTracer
             float t = Vector3.Dot(rayToPlane, normal) / denom;
             if (t >= 0)
             {
-                if (t < ray.t) ray.t = t;
-                return new Intersection(this, normal, ray.t * ray.direction, ray.t);
+                if (t < ray.t)
+                {
+                    ray.t = t;
+                    return new Intersection(this, normal, ray.t * ray.direction, ray.t);
+                }
             }
             return null;
         }
 
         internal override Vector3 GetColor(Vector3 location)
         {
-            if (location.X % 1 < 0.5 && location.X >= 0 && Math.Abs(location.Z) % 1 < 0.5
-                || location.X % 1 > 0.5 && location.X >= 0 && Math.Abs(location.Z) % 1 > 0.5
-                || location.X % 1 < -0.5 && Math.Abs(location.Z) % 1 < 0.5
-                || location.X % 1 > -0.5 && location.X < 0 && Math.Abs(location.Z) % 1 > 0.5)
-                return new Vector3(0, 0, 0);
-            else return new Vector3(1, 1, 1);
+            if (isCheckered)
+            {
+                if (location.X % 1 < 0.5 && location.X >= 0 && Math.Abs(location.Z) % 1 < 0.5
+                    || location.X % 1 > 0.5 && location.X >= 0 && Math.Abs(location.Z) % 1 > 0.5
+                    || location.X % 1 < -0.5 && Math.Abs(location.Z) % 1 < 0.5
+                    || location.X % 1 > -0.5 && location.X < 0 && Math.Abs(location.Z) % 1 > 0.5)
+                    return new Vector3(0, 0, 0);
+                else return new Vector3(1, 1, 1);
+            }
+            else return this.material.color;
         }
     }
 }
