@@ -45,7 +45,7 @@ namespace RayTracer
             if (transparency > 0) this.isDielectic = true;
             if (shine > 0) this.isShiny = true;
 
-            this.diffuseness = 1 - reflectiveness - transparency - shine;
+            this.diffuseness = 1 - (reflectiveness + transparency + shine);
         }
     }
 }
