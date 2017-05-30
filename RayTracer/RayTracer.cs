@@ -22,7 +22,7 @@ namespace RayTracer
         public Scene scene = new Scene();
 
         // maximum recursion depth
-        short maxDepth = 3;
+        short maxDepth = 5;
 
         // How many rays are cast per pixel; implementation of anti-aliasing.
         private int raysPerPixel = 5;

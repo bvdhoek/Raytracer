@@ -20,7 +20,7 @@ namespace RayTracer {
             this.lights[0] = new Light();
             Vector3 spherePos = new Vector3(-2f, 0, 7);
             this.primitives[0] = new Sphere(spherePos, 1f, new Vector3(1, 0, 0),0 , 0.9f);
-            this.primitives[0].material.absorbtion = new Vector3(0.1f, 0, 0);
+            this.primitives[0].material.absorbtion = new Vector3(0.08f, 0, 0);
 
             spherePos = new Vector3(-1.3f, 0f, 13);
             this.primitives[1] = new Sphere(spherePos, 1f, new Vector3(0, 1, 0), 0.1f);
