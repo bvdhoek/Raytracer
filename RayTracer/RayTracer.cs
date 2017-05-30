@@ -24,7 +24,7 @@ namespace RayTracer
         short maxDepth = 4;
 
         // How many rays are cast per pixel; implementation of anti-aliasing.
-        private int raysPerPixel = 1;
+        private int raysPerPixel = 2;
 
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
@@ -84,7 +84,7 @@ namespace RayTracer
         Vector3 Trace(Ray ray, short depth, bool drawDebugLine, bool absorb = false)
         {
             // Background color. This will be the color of the skydome once that's implemented
-            Vector3 backgroundColor = new Vector3(0, 0, 0);
+            Vector3 backgroundColor = GetSkyColor(ray);
 
             if (depth == maxDepth)
             {
@@ -121,6 +121,20 @@ namespace RayTracer
                 return DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
         }
 
+        private Vector3 GetSkyColor(Ray ray)
+        {
+            if(ray.direction.X == 0 && ray.direction.Y == 0)
+            {
+                return new Vector3(0,0,0);
+            }
+            float r = (float) ((1.0f / Math.PI) * Math.Acos(ray.direction.Z) / Math.Sqrt(ray.direction.X * ray.direction.X + ray.direction.Y * ray.direction.Y));
+            int x = (int)(((ray.direction.X * r + 1) / 2) * scene.sky.Width);
+            int y = scene.sky.Height - (int)(((ray.direction.Y * r + 1) / 2) * scene.sky.Height);
+            Color pixel = scene.sky.GetPixel(x, y);
+            Console.WriteLine(pixel);
+            return new Vector3(pixel.R / 255f, pixel.G / 255f, pixel.B / 255f);
+        }
+
         // Do we have to pass all these ugly arguments? ='( 
         // If we want to multi-thread it: yes.
         private Vector3 DoFancyColorCalculations(Ray ray, Intersection intersect, Vector3 color, short depth, bool drawDebugLine)
@@ -133,27 +147,11 @@ namespace RayTracer
             }
             if (material.isDielectic)
             {
-                float nDotD = Vector3.Dot(intersect.normal, ray.direction);
-                float e = intersect.primitive.material.e;
-
-                if (nDotD < 0)
-                {
-                    nDotD = -nDotD; // we are outside the surface, we want cos(theta) to be positive
-                }
-
-                // Calculate some neccessary variables:
-                float r0Root = (1 - material.refractionIndex) / (1 + material.refractionIndex);
-                float r0 = r0Root * r0Root; // r0
-                float oneMinusCos = 1 - nDotD; // (1 - cos alpha)
-
-                // Calculate how much light is reflected:
-                float reflection = r0 + (1 - r0) * oneMinusCos * oneMinusCos * oneMinusCos * oneMinusCos * oneMinusCos;
-                // ... and how much light is refracted
-                float refraction = 1 - reflection;
+                float reflection = GetSchlickReflection(intersect, ray);
 
                 // Now do the magic:
                 color += material.transparency * reflection * Reflect(ray, intersect, depth, drawDebugLine); // reFLECT
-                color += material.transparency * refraction * Refract(ray, intersect, depth, drawDebugLine); //reFRACT
+                color += material.transparency * (1 - reflection) * Refract(ray, intersect, depth, drawDebugLine); //reFRACT
             }
             if (material.isShiny)
             {
@@ -166,12 +164,36 @@ namespace RayTracer
             return color;
         }
 
+        private float GetSchlickReflection(Intersection intersect, Ray ray)
+        {
+            float nDotD = Vector3.Dot(intersect.normal, ray.direction);
+
+            float eta1 = 1; // air
+            float eta2 = intersect.GetMaterial().refractionIndex;
+
+            if (nDotD < 0)
+            {
+                nDotD = -nDotD; // we are outside the surface, we want cos(theta) to be positive 
+            }
+            else
+            {
+                eta1 = eta2; eta2 = 1;
+            }
+
+            // Calculate some neccessary variables:
+            float r0 = (eta1 - eta2) / (eta1 + eta2);
+            r0 *= r0;
+            float oneMinusCos = 1 - nDotD; // (1 - cos alpha)
+
+            // Calculate how much light is reflected:
+            return r0 + (1 - r0) * oneMinusCos * oneMinusCos * oneMinusCos * oneMinusCos * oneMinusCos;
+        }
+
         private Vector3 Refract(Ray ray, Intersection intersect, short depht, bool drawDebugline)
         {
             float nDotD = Vector3.Dot(intersect.normal, ray.direction);
-            float e = intersect.primitive.material.e;
-
             bool absorb = false;
+            float eta1 = 1, eta2 = intersect.GetMaterial().refractionIndex;
             if (nDotD < 0)
             {
                 nDotD = -nDotD; // we are outside the surface, we want cos(theta) to be positive
@@ -179,10 +201,11 @@ namespace RayTracer
             }
             else
             {
+                eta1 = eta2; eta2 = 1;
                 intersect.InvertNormal(); // we are inside the surface, cos(theta) is already positive but reverse normal direction 
-                e = intersect.primitive.material.refractionIndex;
             }
 
+            float e = eta1 / eta2;
             float c = 1 - e * e * (1 - nDotD * nDotD);
 
             if (c < 0) return new Vector3(0, 0, 0);

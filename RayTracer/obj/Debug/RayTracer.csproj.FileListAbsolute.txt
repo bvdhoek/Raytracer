@@ -32,3 +32,4 @@ C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\System.Nu
 C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.csprojResolveAssemblyReference.cache
 C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.exe
 C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.pdb
+C:\Users\wzwie\OneDrive\Documents\GitHub\Raytracer\RayTracer\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll

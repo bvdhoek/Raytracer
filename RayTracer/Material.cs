@@ -21,14 +21,12 @@ namespace RayTracer
 
         public float refractionIndex = 1.5f; // glass
 
-        public float e; // 1 over refraction index
         private bool isCheckered;
         internal Vector3 absorbtion;
 
         public Material()
         {
             this.diffuseness = 1;
-            this.e = 1 / refractionIndex;
         }
 
         internal void SetColor(Vector3 color, float reflectiveness = 0, float transparency = 0, float shine = 0)
