@@ -39,39 +39,9 @@ namespace RayTracer
             setScreen();
         }
 
-        public void MoveRight()
+        public void Move(float distance, Vector3 directionVector)
         {
-            pos += 0.1f * right;
-            setScreen();
-        }
-
-        public void MoveLeft()
-        {
-            pos -= 0.1f * right;
-            setScreen();
-        }
-
-        public void MoveUp()
-        {
-            pos += 0.1f * up;
-            setScreen();
-        }
-
-        public void MoveDown()
-        {
-            pos -= 0.1f * up;
-            setScreen();
-        }
-
-        public void MoveForward()
-        {
-            pos += 0.1f * d;
-            setScreen();
-        }
-
-        public void MoveBack()
-        {
-            pos -= 0.1f * d;
+            pos += distance * directionVector;
             setScreen();
         }
 
