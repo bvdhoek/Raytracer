@@ -1,4 +1,7 @@
-﻿using System;
+﻿using RayTracer.Properties;
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Numerics;
 
 namespace RayTracer {
@@ -6,20 +9,24 @@ namespace RayTracer {
     //method, which loops over the primitives and returns the closest intersection
     public class Scene
     {
-        public Primitive[] primitives = new Primitive[9];
+        public Primitive[] primitives = new Primitive[4];
         private Light[] lights = new Light[1];
-
+        public Bitmap sky;
+        public BitmapData bitmapData;
+       
         // Create new scene and populate with some default lights and primitives.
         public Scene()
         {
+            sky = Resources.uffizi;
+
             this.lights[0] = new Light();
+            Vector3 spherePos = new Vector3(-2, 0, 7);
+            this.primitives[0] = new Sphere(spherePos, 1f, new Vector3(1, 0, 0),0 , 0.9f);
+            this.primitives[0].material.absorbtion = new Vector3(0.01f, 0, 0);
 
-            Vector3 spherePos = new Vector3(-2, -0.2f, 7);
-            this.primitives[0] = new Sphere(spherePos, 0.8f, new Vector3(1, 0, 0),0 , 0.9f);
-            this.primitives[0].material.absorbtion = new Vector3(0.3f, 0, 0);
-
-            spherePos = new Vector3(0, -0.2f, 5);
-            this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0), 0.1f);
+            spherePos.Z += 2;
+            spherePos.X += 2;
+            this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0));
 
             spherePos = new Vector3(1.5f, -0.2f, 7);
             this.primitives[2] = new Sphere(spherePos, 0.5f, new Vector3(0, 0.4f, 0.8f), 0.3f);
@@ -28,11 +35,6 @@ namespace RayTracer {
             {
                 isCheckered = true
             };
-            primitives[4] = new Plane(new Vector3(1, 0, 0), new Vector3(-3, 0, 0), new Vector3(0, 1, 1));
-            primitives[5] = new Plane(new Vector3(-1, 0, 0), new Vector3(4, 0, 0), new Vector3(1, 1, 1));
-            primitives[6] = new Plane(new Vector3(0, 0, -1), new Vector3(0, 0, 11), new Vector3(1, 0, 0));
-            primitives[7] = new Plane(new Vector3(0, -1, 0), new Vector3(0, 5, 0), new Vector3(0.5f, 0.5f, 0.5f));
-            primitives[8] = new Plane(new Vector3(0, 0, 1), new Vector3(0, 0, -1), new Vector3(0.5f, 0.5f, 0.5f));
         }
 
         // Find intersection of the ray with nearest object in the scene.

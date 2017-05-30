@@ -9,6 +9,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace RayTracer
 {
@@ -26,10 +27,18 @@ namespace RayTracer
         // How many rays are cast per pixel; implementation of anti-aliasing.
         private int raysPerPixel = 3;
 
+        BitmapData skyData;
+        byte[] skyPixels;
+
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
         {
             Debugger.SetupDebugView(camera, scene);
+
+            // Get skybox data
+            skyData = scene.sky.LockBits(new Rectangle(0, 0, scene.sky.Width, scene.sky.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            skyPixels = new byte[scene.sky.Width * scene.sky.Height * 3];
+            Marshal.Copy(skyData.Scan0, skyPixels, 0, skyPixels.Length);
 
             // 3D image
             Rectangle rect = new Rectangle(0, 0, 512, 512);
@@ -72,6 +81,10 @@ namespace RayTracer
             image3D.UnlockBits(bitmapData);
             Bitmap scaledImage = new Bitmap(image3D, new Size(screenSize, screenSize));
 
+            // Unlock the skybox
+            Marshal.Copy(skyPixels, 0, skyData.Scan0, skyPixels.Length);
+            scene.sky.UnlockBits(skyData);
+
             Bitmap combined = new Bitmap(1024, 512);
             Graphics combinedGraphics = Graphics.FromImage(combined);
             combinedGraphics.DrawImage(image3D, 0, 0);
@@ -83,12 +96,9 @@ namespace RayTracer
         // This is where the magic happens! Trace a ray...
         Vector3 Trace(Ray ray, short depth, bool drawDebugLine, bool absorb = false)
         {
-            // Background color. This will be the color of the skydome once that's implemented
-            Vector3 backgroundColor = new Vector3(0, 0, 0);
-
             if (depth == maxDepth)
             {
-                return backgroundColor;
+                return new Vector3();
             }
 
             // see if the ray hits anything.
@@ -107,7 +117,7 @@ namespace RayTracer
 
             if (intersect == null)
             {
-                return backgroundColor;
+                return GetSkyColor(ray);
             }
 
             // Magic!
@@ -115,17 +125,40 @@ namespace RayTracer
             {
                 return intersect.dist
                 * -intersect.GetMaterial().absorbtion
-                +  DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
+                +  DoFancyColorCalculations(ray, intersect, depth, drawDebugLine);
             }
             else
-                return DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
+                return DoFancyColorCalculations(ray, intersect, depth, drawDebugLine);
+        }
+
+        // Calculate the sky color and get it from a bitmap
+        private Vector3 GetSkyColor(Ray ray)
+        {
+            if(ray.direction.X == 0 && ray.direction.Y == 0)
+            {
+                return new Vector3(0,0,0);
+            }
+            // Get location on screen
+            float r = (float) ((1.0f / Math.PI) * Math.Acos(ray.direction.Z) / Math.Sqrt(ray.direction.X * ray.direction.X + ray.direction.Y * ray.direction.Y));
+            int x = (int)(((ray.direction.X * r + 1f) / 2f) * scene.sky.Width);
+            int y = scene.sky.Height - (int)(((ray.direction.Y * r + 1f) / 2f) * scene.sky.Height);
+
+            int location = (y * scene.sky.Width + x) * 3;
+            if(location > skyPixels.Length)
+            {
+                location = skyPixels.Length - 2;
+            }
+
+            return new Vector3(skyPixels[location + 2] / 256f, skyPixels[location + 1] / 256f, skyPixels[location] / 256f);
         }
 
         // Do we have to pass all these ugly arguments? ='( 
         // If we want to multi-thread it: yes.
-        private Vector3 DoFancyColorCalculations(Ray ray, Intersection intersect, Vector3 color, short depth, bool drawDebugLine)
+        private Vector3 DoFancyColorCalculations(Ray ray, Intersection intersect, short depth, bool drawDebugLine)
         {
             depth++; // increment our recursion depth.
+            Vector3 color = new Vector3();
+
             Material material = intersect.GetMaterial();
             if (material.isMirror)
             {
