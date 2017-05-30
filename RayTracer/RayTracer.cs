@@ -25,7 +25,7 @@ namespace RayTracer
         short maxDepth = 5;
 
         // How many rays are cast per pixel; implementation of anti-aliasing.
-        private int raysPerPixel = 5;
+        private int raysPerPixel = 10;
 
         BitmapData skyData;
         byte[] skyPixels;
