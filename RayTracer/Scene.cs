@@ -9,7 +9,7 @@ namespace RayTracer {
     //method, which loops over the primitives and returns the closest intersection
     public class Scene
     {
-        public Primitive[] primitives = new Primitive[4];
+        public Primitive[] primitives = new Primitive[6];
         private Light[] lights = new Light[1];
         public Bitmap sky;
         public BitmapData bitmapData;
@@ -20,18 +20,23 @@ namespace RayTracer {
             sky = Resources.uffizi;
 
             this.lights[0] = new Light();
-            Vector3 spherePos = new Vector3(-2, 0, 7);
+            Vector3 spherePos = new Vector3(-2f, 0, 7);
             this.primitives[0] = new Sphere(spherePos, 1f, new Vector3(1, 0, 0),0 , 0.9f);
             this.primitives[0].material.absorbtion = new Vector3(0.1f, 0, 0);
 
-            spherePos.Z += 2;
-            spherePos.X += 2;
-            this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0), 0.1f);
+            spherePos = new Vector3(-1.3f, 0f, 13);
+            this.primitives[1] = new Sphere(spherePos, 1f, new Vector3(0, 1, 0), 0.1f);
 
-            spherePos = new Vector3(1.5f, -0.2f, 7);
-            this.primitives[2] = new Sphere(spherePos, 0.5f, new Vector3(0, 0.4f, 0.8f), 0.3f);
+            spherePos = new Vector3(1.5f, -0.3f, 7);
+            this.primitives[2] = new Sphere(spherePos, 0.7f, new Vector3(0, 0.2f, 0.6f), 0.6f);
 
-            primitives[3] = new Plane(new Vector3(0, 1, 0), new Vector3(0, -1, 0), new Vector3(0, 1, 1), 0.5f)
+            spherePos = new Vector3(0.8f, -0.7f, 5.5f);
+            this.primitives[3] = new Sphere(spherePos, 0.3f, new Vector3(0f, 0.4f, 0.7f), 0.3f);
+
+            spherePos = new Vector3(-0.7f, -0.75f, 5);
+            this.primitives[4] = new Sphere(spherePos, 0.25f, new Vector3(1, 1, 0), 0.25f);
+
+            primitives[5] = new Plane(new Vector3(0, 1, 0), new Vector3(0, -1, 0), new Vector3(0, 1, 1), 0.35f)
             {
                 isCheckered = true
             };

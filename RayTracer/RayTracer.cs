@@ -22,10 +22,10 @@ namespace RayTracer
         public Scene scene = new Scene();
 
         // maximum recursion depth
-        short maxDepth = 5;
+        short maxDepth = 3;
 
         // How many rays are cast per pixel; implementation of anti-aliasing.
-        private int raysPerPixel = 3;
+        private int raysPerPixel = 5;
 
         BitmapData skyData;
         byte[] skyPixels;
@@ -34,7 +34,7 @@ namespace RayTracer
         public unsafe Bitmap Render()
         {
             Debugger.SetupDebugView(camera, scene);
-
+            
             // Get skybox data
             skyData = scene.sky.LockBits(new Rectangle(0, 0, scene.sky.Width, scene.sky.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
             skyPixels = new byte[scene.sky.Width * scene.sky.Height * 3];
@@ -104,20 +104,17 @@ namespace RayTracer
             // see if the ray hits anything.
             Intersection intersect = scene.Intersect(ray);
 
+            if (intersect == null)
+            { // We didn't hit anything. return the background.
+                return GetSkyColor(ray);
+            }
+
             // Draw some debug output.
             if (drawDebugLine)
             {
-                if (intersect == null)
-                    Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.origin.X + ray.direction.X * 100, ray.origin.Z + ray.direction.Z * 100, Color.Red);
-                else
-                    Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, 
-                        intersect.intersectionPoint.X, 
-                        intersect.intersectionPoint.Z, Color.Green);
-            }
-
-            if (intersect == null)
-            {
-                return GetSkyColor(ray);
+                Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z,
+                    intersect.intersectionPoint.X,
+                    intersect.intersectionPoint.Z, Color.Green);
             }
 
             // Magic!
