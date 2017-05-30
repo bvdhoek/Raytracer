@@ -131,17 +131,23 @@ namespace RayTracer
                 return DoFancyColorCalculations(ray, intersect, depth, drawDebugLine);
         }
 
-        private unsafe Vector3 GetSkyColor(Ray ray)
+        // Calculate the sky color and get it from a bitmap
+        private Vector3 GetSkyColor(Ray ray)
         {
             if(ray.direction.X == 0 && ray.direction.Y == 0)
             {
                 return new Vector3(0,0,0);
             }
+            // Get location on screen
             float r = (float) ((1.0f / Math.PI) * Math.Acos(ray.direction.Z) / Math.Sqrt(ray.direction.X * ray.direction.X + ray.direction.Y * ray.direction.Y));
-            int x = (int)(((ray.direction.X * r + 1) / 2) * scene.sky.Width);
-            int y = scene.sky.Height - (int)(((ray.direction.Y * r + 1) / 2) * scene.sky.Height);
+            int x = (int)(((ray.direction.X * r + 1f) / 2f) * scene.sky.Width);
+            int y = scene.sky.Height - (int)(((ray.direction.Y * r + 1f) / 2f) * scene.sky.Height);
 
             int location = (y * scene.sky.Width + x) * 3;
+            if(location > skyPixels.Length)
+            {
+                location = skyPixels.Length - 2;
+            }
 
             return new Vector3(skyPixels[location + 2] / 256f, skyPixels[location + 1] / 256f, skyPixels[location] / 256f);
         }

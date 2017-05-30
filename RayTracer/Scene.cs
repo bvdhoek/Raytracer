@@ -35,11 +35,6 @@ namespace RayTracer {
             {
                 isCheckered = true
             };
-            //primitives[4] = new Plane(new Vector3(1, 0, 0), new Vector3(-3, 0, 0), new Vector3(0, 1, 1));
-            //primitives[5] = new Plane(new Vector3(-1, 0, 0), new Vector3(4, 0, 0), new Vector3(1, 1, 1));
-            //primitives[6] = new Plane(new Vector3(0, 0, -1), new Vector3(0, 0, 11), new Vector3(1, 0, 0));
-            //primitives[7] = new Plane(new Vector3(0, -1, 0), new Vector3(0, 11, 0), new Vector3(0.5f, 0.5f, 0.5f));
-            //primitives[8] = new Plane(new Vector3(0, 0, 1), new Vector3(0, 0, -1), new Vector3(0.5f, 0.5f, 0.5f));
         }
 
         // Find intersection of the ray with nearest object in the scene.

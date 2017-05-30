@@ -93,18 +93,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\uffizi_probe.tif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\grace_probe.tif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\uffizi_probe1.tif" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\uffizi.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\uffizi_probe.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
