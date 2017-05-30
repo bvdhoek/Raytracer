@@ -1,7 +1,6 @@
 ﻿using RayTracer.Properties;
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Numerics;
 
 namespace RayTracer {
@@ -12,7 +11,6 @@ namespace RayTracer {
         public Primitive[] primitives = new Primitive[4];
         private Light[] lights = new Light[1];
         public Bitmap sky;
-        public BitmapData bitmapData;
        
         // Create new scene and populate with some default lights and primitives.
         public Scene()
