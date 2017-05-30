@@ -14,16 +14,16 @@ namespace RayTracer {
         {
             this.lights[0] = new Light();
 
-            Vector3 spherePos = new Vector3(0, 0, 7);
-            this.primitives[0] = new Sphere(spherePos, 1f, new Vector3(1, 0, 0), 0.7f);
-            this.primitives[0].material.absorbtion = new Vector3(0.1f, 0, 0);
+            Vector3 spherePos = new Vector3(-2, 0, 7);
+            this.primitives[0] = new Sphere(spherePos, 1f, new Vector3(1, 0, 0),0 , 0.9f);
+            this.primitives[0].material.absorbtion = new Vector3(0.01f, 0, 0);
 
             spherePos.Z += 2;
-            spherePos.X -= 1;
-            this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0));
+            spherePos.X += 2;
+            this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0), 0.1f);
 
-            spherePos.X += 4;
-            this.primitives[2] = new Sphere(spherePos, 0.5f, new Vector3(0, 0, 1));
+            spherePos.X += 3;
+            this.primitives[2] = new Sphere(spherePos, 0.5f, new Vector3(0, 0, 1), 0.8f);
 
             primitives[3] = new Plane(new Vector3(0, 1, 0), new Vector3(0, -1, 0), new Vector3(0, 1, 1), 0.5f)
             {
@@ -96,6 +96,23 @@ namespace RayTracer {
 
                 return new Vector3(0, 0, 0);
             }
+
+            //shadowRay = new Ray();
+            //shadowRay.origin = intersect.intersectionPoint;
+
+            //// Keep an non-normalized directon in case we need to calculate length later
+            //rayDirection = lights[i].pos - intersect.intersectionPoint;
+            //shadowRay.t = rayDirection.Length();
+
+            //// Normalize for calulating intersections
+            //shadowRay.direction = Vector3.Normalize(rayDirection);
+
+            //// Offset the origin by a small margin
+            //shadowRay.origin += 0.001f * shadowRay.direction;
+
+            ////  Check if any primitives intersect with this shadowray
+            //lightBlocker = Intersect(shadowRay);
+
 
             // Intersection point is in the shadow, return black.
             if (drawDebugLine)

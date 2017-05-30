@@ -24,7 +24,7 @@ namespace RayTracer
         short maxDepth = 4;
 
         // How many rays are cast per pixel; implementation of anti-aliasing.
-        private int raysPerPixel = 4;
+        private int raysPerPixel = 2;
 
         // trace a ray for each pixel and draw on the bitmap
         public unsafe Bitmap Render()
@@ -132,16 +132,23 @@ namespace RayTracer
             if (material.isDielectic)
             {
                 float nDotD = Vector3.Dot(intersect.normal, ray.direction);
-                float e = intersect.primitive.material.e;
+              
+                float eta1 = 1; // air
+                float eta2 = intersect.GetMaterial().refractionIndex;
 
                 if (nDotD < 0)
                 {
-                    nDotD = -nDotD; // we are outside the surface, we want cos(theta) to be positive
+                    nDotD = -nDotD; // we are outside the surface, we want cos(theta) to be positive 
                 }
+                else
+                {
+                    eta1 = eta2;
+                    eta2 = 1;
+                } 
 
                 // Calculate some neccessary variables:
-                float r0Root = (1 - material.refractionIndex) / (1 + material.refractionIndex);
-                float r0 = r0Root * r0Root; // r0
+                float r0 = (eta1 - eta2) / (eta1 + eta2);
+                r0 *= r0;
                 float oneMinusCos = 1 - nDotD; // (1 - cos alpha)
 
                 // Calculate how much light is reflected:
@@ -151,7 +158,7 @@ namespace RayTracer
 
                 // Now do the magic:
                 color += material.transparency * reflection * Reflect(ray, intersect, depth, drawDebugLine); // reFLECT
-                color += material.transparency * refraction * Refract(ray, intersect, depth, drawDebugLine); //reFRACT
+                color += material.transparency * refraction * Refract(ray, intersect, depth, drawDebugLine, eta1, eta2); //reFRACT
             }
             if (material.isShiny)
             {
@@ -164,11 +171,9 @@ namespace RayTracer
             return color;
         }
 
-        private Vector3 Refract(Ray ray, Intersection intersect, short depht, bool drawDebugline)
+        private Vector3 Refract(Ray ray, Intersection intersect, short depht, bool drawDebugline, float eta1, float eta2)
         {
             float nDotD = Vector3.Dot(intersect.normal, ray.direction);
-            float e = intersect.primitive.material.e;
-
             bool absorb = false;
             if (nDotD < 0)
             {
@@ -178,9 +183,9 @@ namespace RayTracer
             else
             {
                 intersect.InvertNormal(); // we are inside the surface, cos(theta) is already positive but reverse normal direction 
-                e = intersect.primitive.material.refractionIndex;
             }
 
+            float e = eta1 / eta2;
             float c = 1 - e * e * (1 - nDotD * nDotD);
 
             if (c < 0) return new Vector3(0, 0, 0);
