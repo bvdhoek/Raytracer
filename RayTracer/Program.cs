@@ -64,9 +64,34 @@ namespace RayTracer
                     break;
                 case Keys.E:
                     rayTracer.camera.MoveUp();
-                    Debugger.Reset();
+                    break;
+                case Keys.Right:
+                    rayTracer.camera.RotateRight(2);
+                    break;
+                case Keys.Left:
+                    rayTracer.camera.RotateLeft(2);
+                    break;
+                case Keys.Up:
+                    rayTracer.camera.RotateUp(2);
+                    break;
+                case Keys.Down:
+                    rayTracer.camera.RotateDown(2);
+                    break;
+                case Keys.M:
+                    rayTracer.camera.TurnRight(2);
+                    break;
+                case Keys.N:
+                    rayTracer.camera.TurnLeft(2);
                     break;
             }
+            Console.WriteLine("Camera position: ({0}, {1}, {2})", rayTracer.camera.pos.X, rayTracer.camera.pos.Y, rayTracer.camera.pos.Z);
+            Console.WriteLine("Camera direction: ({0}, {1}, {2})", rayTracer.camera.d.X, rayTracer.camera.d.Y, rayTracer.camera.d.Z);
+            Console.WriteLine("direction length: {0}", rayTracer.camera.d.Length());
+            Console.WriteLine("Camera up: ({0}, {1}, {2})", rayTracer.camera.up.X, rayTracer.camera.up.Y, rayTracer.camera.up.Z);
+            Console.WriteLine("up length: {0}", rayTracer.camera.up.Length());
+            Console.WriteLine("Camera right: ({0}, {1}, {2})", rayTracer.camera.right.X, rayTracer.camera.right.Y, rayTracer.camera.right.Z);
+            Console.WriteLine("right length: {0}", rayTracer.camera.right.Length());
+            Console.WriteLine("");
             Invalidate();
         }
 

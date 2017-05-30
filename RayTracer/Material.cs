@@ -23,6 +23,7 @@ namespace RayTracer
 
         public float e; // 1 over refraction index
         private bool isCheckered;
+        internal Vector3 absorbtion;
 
         public Material()
         {
