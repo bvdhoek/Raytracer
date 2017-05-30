@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Debugger.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Intersection.cs" />
     <Compile Include="Light.cs" />
     <Compile Include="Material.cs" />

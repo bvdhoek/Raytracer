@@ -8,39 +8,44 @@ using System.Threading.Tasks;
 
 namespace RayTracer
 {
-    class Debugger
+    public static class Debugger
     {
-        public Bitmap image2D = new Bitmap(512, 512);
+        public static Bitmap image2D = new Bitmap(512, 512);
 
-        float scale;
-        Graphics graphics2D;
+        static float scale;
+        static Graphics graphics2D = Graphics.FromImage(image2D);
 
-        // Draw a debug ray. If it intersected, make it red. Otherwise, make it yellow.
-        public void DrawDebugLine(float x1, float z1, float x2, float z2, bool intersect)
+        // Draw a debug ray
+        public static void DrawDebugLine(float x1, float z1, float x2, float z2, Color color)
         {
-            graphics2D.DrawLine(intersect ? new Pen(Color.Red) : new Pen(Color.Yellow),
-                x1 * scale + image2D.Width / 2,
-                image2D.Height - z1 * scale,
-                x2 * scale + image2D.Width / 2,
-                image2D.Height - z2 * scale);
+            float a = Helpers.ClampToMinimumDesktopCoordinate(x1 * scale + image2D.Width / 2);
+            float b = Helpers.ClampToMinimumDesktopCoordinate(image2D.Height - z1 * scale);
+            float c = Helpers.ClampToMinimumDesktopCoordinate(x2 * scale + image2D.Width / 2);
+            float d = Helpers.ClampToMinimumDesktopCoordinate(image2D.Height - z2 * scale);
+
+            graphics2D.DrawLine(new Pen(color),
+                a, b, c, d);
         }
 
-        internal void SetupDebugView(Camera camera, Scene scene)
+        public static void Reset()
         {
+            graphics2D.Clear(Color.Black);
+        }
 
+        internal static void SetupDebugView(Camera camera, Scene scene)
+        {
             graphics2D = Graphics.FromImage(image2D);
+            graphics2D.FillRectangle(Brushes.Black, 0, 0, image2D.Width, image2D.Height);
             SetDebugScale(camera, scene);
             DrawDebugPrimitives(scene);
             DrawDebugScreen(camera);
-
         }
         // Draw a white line in de debugview representing the screen.
-        private void DrawDebugScreen(Camera camera)
+        private static void DrawDebugScreen(Camera camera)
         {
             Vector3 p0 = camera.p0;
             Vector3 p1 = camera.p1;
             float widthOffset = image2D.Width / 2 - p1.X - p0.X;
-
             graphics2D.DrawLine(new Pen(Color.White),
                 p0.X * scale + widthOffset,
                 image2D.Height - p0.Z * scale,
@@ -49,7 +54,7 @@ namespace RayTracer
         }
 
         // Determine furthest object from the camera for scale of the debugview
-        private void SetDebugScale(Camera camera, Scene scene)
+        private static void SetDebugScale(Camera camera, Scene scene)
         {
             float maxX = 0f;
             float maxZ = 0f;
@@ -69,12 +74,13 @@ namespace RayTracer
                 }
             }
 
-            float max = maxX > maxZ ? maxX : maxZ;
+            float max = maxX > maxZ ? maxX : maxZ + 2;
             scale = image2D.Width / max;
         }
 
-        private void DrawDebugPrimitives(Scene scene)
+        private static void DrawDebugPrimitives(Scene scene)
         {
+            graphics2D.Clear(Color.Black);
             foreach (Primitive primitive in scene.primitives)
             {
                 // Draw a nice ellipse for each sphere

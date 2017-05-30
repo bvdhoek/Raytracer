@@ -30,5 +30,15 @@ namespace RayTracer
             }
             return null;
         }
+
+        internal override Vector3 GetColor(Vector3 location)
+        {
+            if (location.X % 1 < 0.5 && location.X >= 0 && Math.Abs(location.Z) % 1 < 0.5
+                || location.X % 1 > 0.5 && location.X >= 0 && Math.Abs(location.Z) % 1 > 0.5
+                || location.X % 1 < -0.5 && Math.Abs(location.Z) % 1 < 0.5
+                || location.X % 1 > -0.5 && location.X < 0 && Math.Abs(location.Z) % 1 > 0.5)
+                return new Vector3(0, 0, 0);
+            else return new Vector3(1, 1, 1);
+        }
     }
 }
