@@ -144,9 +144,9 @@ namespace RayTracer
             int y = scene.sky.Height - (int)(((ray.direction.Y * r + 1f) / 2f) * scene.sky.Height);
 
             int location = (y * scene.sky.Width + x) * 3;
-            if(location > skyPixels.Length)
+            if(location > skyPixels.Length || location < 0)
             {
-                location = skyPixels.Length - 2;
+                return new Vector3();
             }
 
             return new Vector3(skyPixels[location + 2] / 256f, skyPixels[location + 1] / 256f, skyPixels[location] / 256f);
