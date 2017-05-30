@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace RayTracer
 {
@@ -9,40 +10,111 @@ namespace RayTracer
 
         // Camera direction
         public Vector3 d = new Vector3(0, 0, 1);
+        public float distanceToScreen = 2;
 
-        Vector3 screenCenter;
+        public Vector3 screenCenter, up, right;
 
         // Screen corners:
         public Vector3 p0, p1, p2;
 
         public Camera()
         {
+            up = new Vector3(0, 1, 0);
+            right = Vector3.Cross(up, d);
+            up = Vector3.Cross(d, right);
             setScreen();
         }
 
         private void setScreen()
         {
-            this.screenCenter = pos + 2 * d;
-            p0 = screenCenter + new Vector3(-1, 1, 0);
-            p1 = screenCenter + new Vector3(1, 1, 0);
-            p2 = screenCenter + new Vector3(-1, -1, 0);
+            screenCenter = pos + distanceToScreen * d;
+            p0 = screenCenter + up - right;
+            p1 = screenCenter + up + right;
+            p2 = screenCenter - up - right;
         }
 
         public void Zoom(float scalar)
         {
-            d *= scalar;
+            distanceToScreen *= scalar;
             setScreen();
         }
 
-        public void MoveX(float distance)
+        public void MoveRight()
         {
-            pos.X += distance;
+            pos += 0.1f * right;
             setScreen();
         }
 
-        public void MoveY(float distance)
+        public void MoveLeft()
         {
-            pos.Y += distance;
+            pos -= 0.1f * right;
+            setScreen();
+        }
+
+        public void MoveUp()
+        {
+            pos += 0.1f * up;
+            setScreen();
+        }
+
+        public void MoveDown()
+        {
+            pos -= 0.1f * up;
+            setScreen();
+        }
+
+        public void MoveForward()
+        {
+            pos += 0.1f * d;
+            setScreen();
+        }
+
+        public void MoveBack()
+        {
+            pos -= 0.1f * d;
+            setScreen();
+        }
+
+        // rotation methods assume degrees < 90
+        public void RotateRight(float degrees)
+        {
+            d = Vector3.Normalize(d + ((float) Math.Tan(degrees / 180 * Math.PI)) * right);
+            right = Vector3.Cross(up, d);
+            setScreen();
+        }
+
+        public void RotateLeft(float degrees)
+        {
+            d = Vector3.Normalize(d + ((float)-Math.Tan(degrees / 180 * Math.PI)) * right);
+            right = Vector3.Cross(up, d);
+            setScreen();
+        }
+
+        public void RotateUp(float degrees)
+        {
+            d = Vector3.Normalize(d + ((float)Math.Tan(degrees / 180 * Math.PI)) * up);
+            up = Vector3.Cross(d, right);
+            setScreen();
+        }
+
+        public void RotateDown(float degrees)
+        {
+            d = Vector3.Normalize(d + ((float)-Math.Tan(degrees / 180 * Math.PI)) * up );
+            up = Vector3.Cross(d, right);
+            setScreen();
+        }
+
+        public void TurnRight(float degrees)
+        {
+            up = Vector3.Normalize(up + ((float)Math.Tan(degrees / 180 * Math.PI)) * right);
+            right = Vector3.Cross(up, d);
+            setScreen();
+        }
+
+        public void TurnLeft(float degrees)
+        {
+            up = Vector3.Normalize(up + ((float)Math.Tan(degrees / 180 * Math.PI)) * -1 * right);
+            right = Vector3.Cross(up, d);
             setScreen();
         }
 

@@ -59,10 +59,10 @@ namespace RayTracer
                         color += Trace(ray, 0, i == 265 && j % 32 == 0 && k == 0) / raysPerPixel;
                     }
                     *line++ = (uint)Color.FromArgb(
-                                            Clamp((int)(color.X * 255)),
-                                            Clamp((int)(color.Y * 255)),
-                                            Clamp((int)(color.Z * 255))
-                                         ).ToArgb();
+                                        Helpers.ClampColor((int)(color.X * 255)),
+                                        Helpers.ClampColor((int)(color.Y * 255)),
+                                        Helpers.ClampColor((int)(color.Z * 255))
+                                     ).ToArgb();
                 }
                 // Set pointer to next line
                 ptr += bitmapData.Stride / 4;
@@ -100,7 +100,9 @@ namespace RayTracer
                 if (intersect == null)
                     Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, ray.origin.X + ray.direction.X * 100, ray.origin.Z + ray.direction.Z * 100, Color.Red);
                 else
-                    Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, intersect.intersectionPoint.X, intersect.intersectionPoint.Z, Color.Green);
+                    Debugger.DrawDebugLine(ray.origin.X, ray.origin.Z, 
+                        intersect.intersectionPoint.X, 
+                        intersect.intersectionPoint.Z, Color.Green);
             }
 
             if (intersect == null)
@@ -209,14 +211,6 @@ namespace RayTracer
 
             mirrorRay.origin += 0.001f * mirrorRay.direction; // offset by a small margin
             return Trace(mirrorRay, depth, drawDebugLine);
-        }
-
-        // Clamp integer to minimum 0 and max 255
-        int Clamp(int i)
-        {
-            if (i < 0) i = 0;
-            if (i > 255) i = 255;
-            return i;
         }
     }
 }
