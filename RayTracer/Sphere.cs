@@ -41,7 +41,8 @@ namespace RayTracer
                 // origin is inside the sphere
                 t += (float)Math.Sqrt(r * r - q2);
             }
-            else t -= (float)Math.Sqrt(r * r - q2);
+            else
+                t -= (float)Math.Sqrt(r * r - q2);
 
             if (t < ray.t && t > 0)
             { // Set length of the ray to t.
@@ -49,10 +50,13 @@ namespace RayTracer
             }
             else return null;
 
+            if ((t < ray.t) && (t > 0)) ray.t = t;
+
             Vector3 normal = Vector3.Normalize((ray.origin + ray.t * ray.direction) - origin);
 
             // return a new intersect with: this, the normal to the sphere, the intersection point, the distance
             return new Intersection(this, normal, ray.origin + ray.direction * ray.t, ray.t);
+
         }
     }
 }
