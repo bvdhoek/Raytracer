@@ -27,48 +27,72 @@ namespace RayTracer
         {
             Rectangle screenRectangle = RectangleToScreen(this.ClientRectangle);
             this.rayTracer = rayTracer;
-            this.Width = 1024;
-            this.Height = 512 + screenRectangle.Top - this.Top;
-            this.SetStyle(ControlStyles.DoubleBuffer |
+            Width = 1024;
+            Height = 512 + screenRectangle.Top - this.Top;
+            SetStyle(ControlStyles.DoubleBuffer |
                           ControlStyles.UserPaint |
                           ControlStyles.AllPaintingInWmPaint,
                           true);
-            this.UpdateStyles();
+            UpdateStyles();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
-            if (e.KeyCode == Keys.Q)
+            switch (e.KeyCode)
             {
-                rayTracer.camera.Zoom(1.1f);
-                Invalidate();
+                case Keys.Z:
+                    rayTracer.camera.Zoom(1.1f);
+                    break;
+                case Keys.X:
+                    rayTracer.camera.Zoom(0.9f);
+                    break;
+                case Keys.W:
+                    rayTracer.camera.MoveForward();
+                    break;
+                case Keys.A:
+                    rayTracer.camera.MoveLeft();
+                    break;
+                case Keys.S:
+                    rayTracer.camera.MoveBack();
+                    break;
+                case Keys.D:
+                    rayTracer.camera.MoveRight();
+                    break;
+                case Keys.Q:
+                    rayTracer.camera.MoveDown();
+                    break;
+                case Keys.E:
+                    rayTracer.camera.MoveUp();
+                    break;
+                case Keys.Right:
+                    rayTracer.camera.RotateRight(2);
+                    break;
+                case Keys.Left:
+                    rayTracer.camera.RotateLeft(2);
+                    break;
+                case Keys.Up:
+                    rayTracer.camera.RotateUp(2);
+                    break;
+                case Keys.Down:
+                    rayTracer.camera.RotateDown(2);
+                    break;
+                case Keys.M:
+                    rayTracer.camera.TurnRight(2);
+                    break;
+                case Keys.N:
+                    rayTracer.camera.TurnLeft(2);
+                    break;
             }
-            else if (e.KeyCode == Keys.W)
-            {
-                rayTracer.camera.Zoom(0.9f);
-                Invalidate();
-            }
-            else if (e.KeyCode == Keys.Left)
-            {
-                rayTracer.camera.MoveX(-0.1f);
-                Invalidate();
-            }
-            else if (e.KeyCode == Keys.Right)
-            {
-                rayTracer.camera.MoveX(0.1f);
-                Invalidate();
-            }
-            else if (e.KeyCode == Keys.Up)
-            {
-                rayTracer.camera.MoveY(0.1f);
-                Invalidate();
-            }
-            else if (e.KeyCode == Keys.Down)
-            {
-                rayTracer.camera.MoveY(-0.1f);
-                Invalidate();
-            }
+            Console.WriteLine("Camera position: ({0}, {1}, {2})", rayTracer.camera.pos.X, rayTracer.camera.pos.Y, rayTracer.camera.pos.Z);
+            Console.WriteLine("Camera direction: ({0}, {1}, {2})", rayTracer.camera.d.X, rayTracer.camera.d.Y, rayTracer.camera.d.Z);
+            Console.WriteLine("direction length: {0}", rayTracer.camera.d.Length());
+            Console.WriteLine("Camera up: ({0}, {1}, {2})", rayTracer.camera.up.X, rayTracer.camera.up.Y, rayTracer.camera.up.Z);
+            Console.WriteLine("up length: {0}", rayTracer.camera.up.Length());
+            Console.WriteLine("Camera right: ({0}, {1}, {2})", rayTracer.camera.right.X, rayTracer.camera.right.Y, rayTracer.camera.right.Z);
+            Console.WriteLine("right length: {0}", rayTracer.camera.right.Length());
+            Console.WriteLine("");
+            Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e)

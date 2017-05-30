@@ -13,23 +13,29 @@ namespace RayTracer
         public static Bitmap image2D = new Bitmap(512, 512);
 
         static float scale;
-        static Graphics graphics2D;
+        static Graphics graphics2D = Graphics.FromImage(image2D);
 
         // Draw a debug ray
         public static void DrawDebugLine(float x1, float z1, float x2, float z2, Color color)
         {
+            float a = Helpers.ClampToMinimumDesktopCoordinate(x1 * scale + image2D.Width / 2);
+            float b = Helpers.ClampToMinimumDesktopCoordinate(image2D.Height - z1 * scale);
+            float c = Helpers.ClampToMinimumDesktopCoordinate(x2 * scale + image2D.Width / 2);
+            float d = Helpers.ClampToMinimumDesktopCoordinate(image2D.Height - z2 * scale);
+
             graphics2D.DrawLine(new Pen(color),
-                x1 * scale + image2D.Width / 2,
-                image2D.Height - z1 * scale,
-                x2 * scale + image2D.Width / 2,
-                image2D.Height - z2 * scale);
+                a, b, c, d);
+        }
+
+        public static void Reset()
+        {
+            graphics2D.Clear(Color.Black);
         }
 
         internal static void SetupDebugView(Camera camera, Scene scene)
         {
             graphics2D = Graphics.FromImage(image2D);
             graphics2D.FillRectangle(Brushes.Black, 0, 0, image2D.Width, image2D.Height);
-
             SetDebugScale(camera, scene);
             DrawDebugPrimitives(scene);
             DrawDebugScreen(camera);
@@ -40,7 +46,6 @@ namespace RayTracer
             Vector3 p0 = camera.p0;
             Vector3 p1 = camera.p1;
             float widthOffset = image2D.Width / 2 - p1.X - p0.X;
-
             graphics2D.DrawLine(new Pen(Color.White),
                 p0.X * scale + widthOffset,
                 image2D.Height - p0.Z * scale,
@@ -75,6 +80,7 @@ namespace RayTracer
 
         private static void DrawDebugPrimitives(Scene scene)
         {
+            graphics2D.Clear(Color.Black);
             foreach (Primitive primitive in scene.primitives)
             {
                 // Draw a nice ellipse for each sphere
