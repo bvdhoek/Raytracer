@@ -25,3 +25,10 @@ E:\Data\Github\Raytracer\RayTracer\bin\Debug\System.Numerics.Vectors.dll
 E:\Data\Github\Raytracer\RayTracer\bin\Debug\System.Numerics.Vectors.xml
 C:\Users\wzwie\OneDrive\Documents\GitHub\Raytracer\RayTracer\obj\Debug\RayTracer.Properties.Resources.resources
 C:\Users\wzwie\OneDrive\Documents\GitHub\Raytracer\RayTracer\obj\Debug\RayTracer.csproj.GenerateResource.Cache
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\RayTracer.exe
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\RayTracer.pdb
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\bin\Debug\System.Numerics.Vectors.xml
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.csprojResolveAssemblyReference.cache
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.exe
+C:\Users\bernd\src\Graphics\Assignment 2\RayTracer\RayTracer\obj\Debug\RayTracer.pdb
