@@ -18,7 +18,7 @@ namespace RayTracer {
         public Scene()
         {
             sky = Resources.uffizi;
-            // add a comment to fix master
+
             this.lights[0] = new Light();
             Vector3 spherePos = new Vector3(-2, 0, 7);
             this.primitives[0] = new Sphere(spherePos, 1f, new Vector3(1, 0, 0),0 , 0.9f);
