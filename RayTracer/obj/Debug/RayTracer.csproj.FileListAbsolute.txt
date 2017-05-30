@@ -36,3 +36,6 @@ C:\Users\wzwie\OneDrive\Documents\GitHub\Raytracer\RayTracer\bin\Debug\System.Ru
 E:\Data\Github\Raytracer\RayTracer\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll
 E:\Data\Github\Raytracer\RayTracer\obj\Debug\RayTracer.Properties.Resources.resources
 E:\Data\Github\Raytracer\RayTracer\obj\Debug\RayTracer.csproj.GenerateResource.Cache
+D:\Users\Maaike\Documents\Graphics\Raytracer\RayTracer\obj\Debug\RayTracer.csproj.GenerateResource.Cache
+D:\Users\Maaike\Documents\Graphics\Raytracer\RayTracer\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll
+D:\Users\Maaike\Documents\Graphics\Raytracer\RayTracer\obj\Debug\RayTracer.Properties.Resources.resources

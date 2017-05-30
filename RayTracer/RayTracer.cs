@@ -96,12 +96,9 @@ namespace RayTracer
         // This is where the magic happens! Trace a ray...
         Vector3 Trace(Ray ray, short depth, bool drawDebugLine, bool absorb = false)
         {
-            // Background color. This will be the color of the skydome once that's implemented
-            Vector3 backgroundColor = GetSkyColor(ray);
-
             if (depth == maxDepth)
             {
-                return backgroundColor;
+                return new Vector3();
             }
 
             // see if the ray hits anything.
@@ -120,7 +117,7 @@ namespace RayTracer
 
             if (intersect == null)
             {
-                return backgroundColor;
+                return GetSkyColor(ray);
             }
 
             // Magic!
@@ -128,10 +125,10 @@ namespace RayTracer
             {
                 return intersect.dist
                 * -intersect.GetMaterial().absorbtion
-                +  DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
+                +  DoFancyColorCalculations(ray, intersect, depth, drawDebugLine);
             }
             else
-                return DoFancyColorCalculations(ray, intersect, backgroundColor, depth, drawDebugLine);
+                return DoFancyColorCalculations(ray, intersect, depth, drawDebugLine);
         }
 
         private unsafe Vector3 GetSkyColor(Ray ray)
@@ -151,9 +148,11 @@ namespace RayTracer
 
         // Do we have to pass all these ugly arguments? ='( 
         // If we want to multi-thread it: yes.
-        private Vector3 DoFancyColorCalculations(Ray ray, Intersection intersect, Vector3 color, short depth, bool drawDebugLine)
+        private Vector3 DoFancyColorCalculations(Ray ray, Intersection intersect, short depth, bool drawDebugLine)
         {
             depth++; // increment our recursion depth.
+            Vector3 color = new Vector3();
+
             Material material = intersect.GetMaterial();
             if (material.isMirror)
             {

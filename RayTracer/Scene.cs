@@ -26,7 +26,7 @@ namespace RayTracer {
 
             spherePos.Z += 2;
             spherePos.X += 2;
-            this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0), 0.1f);
+            this.primitives[1] = new Sphere(spherePos, 0.5f, new Vector3(0, 1, 0));
 
             spherePos.X += 3;
             this.primitives[2] = new Sphere(spherePos, 0.5f, new Vector3(0, 0, 1), 0.8f);
